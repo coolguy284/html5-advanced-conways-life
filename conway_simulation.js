@@ -3,10 +3,11 @@
 // this object only stores changes to the default state
 class ConwayState {
   defaultStateFunc;
+  // board is object containing times as keys, and a set of altered points as values
   board;
   
   constructor() {
-    this.board = new Set();
+    this.board = {};
   }
   
   setDefaultState(defaultStateFunc) {
@@ -22,11 +23,15 @@ class ConwayState {
   getStateAt(x, y, t) {
     this.errorIfNoDefaultState();
     
-    let stateString = `${x},${y},${t}`;
+    let stateString = `${x},${y}`;
     let defaultState = this.defaultStateFunc(x, y, t);
     
-    if (this.board.has(stateString)) {
-      return !defaultState;
+    if (t in this.board) {
+      if (this.board[t].set.has(stateString)) {
+        return !defaultState;
+      } else {
+        return defaultState;
+      }
     } else {
       return defaultState;
     }
@@ -35,26 +40,30 @@ class ConwayState {
   setStateAt(x, y, t, newState) {
     this.errorIfNoDefaultState();
     
-    let stateString = `${x},${y},${t}`;
+    let stateString = `${x},${y}`;
     let defaultState = this.defaultStateFunc(x, y, t);
     
     if (newState == defaultState) {
-      this.board.delete(stateString);
+      if (t in this.board) {
+        this.board[t].set.delete(stateString);
+        
+        if (this.board[t].set.size == 0) {
+          delete this.board[t];
+        }
+      }
     } else {
-      this.board.add(stateString);
+      if (!(t in this.board)) {
+        this.board[t] = { set: new Set() };
+      }
+      
+      this.board[t].set.add(stateString);
     }
   }
   
   toggleStateAt(x, y, t) {
     this.errorIfNoDefaultState();
     
-    let stateString = `${x},${y},${t}`;
-    
-    if (this.board.has(stateString)) {
-      this.board.delete(stateString);
-    } else {
-      this.board.add(stateString);
-    }
+    this.setStateAt(x, y, t, !this.getStateAt(x, y, t));
   }
 }
 
@@ -128,5 +137,6 @@ class ConwaySimulator {
     }
     
     this.currentT++;
+    this.turn++;
   }
 }
