@@ -23,7 +23,7 @@ function drawConways(ctx) {
   // draw whether each cell is filled in or not
   for (let j = -numSquaresY; j <= numSquaresY; j++) {
     for (let i = -numSquaresX; i <= numSquaresX; i++) {
-      if (false) {
+      if (conwaySim.boardState.getStateAt(i, j, 0)) {
         ctx.fillStyle = 'white';
         ctx.fillRect(
           ...worldSpaceToScreenSpace(i - 0.5, j - 0.5),
