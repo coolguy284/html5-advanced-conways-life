@@ -5,6 +5,7 @@ class ConwayState {
   defaultStateFunc;
   // board is object containing times as keys, and a set of altered points as values
   board;
+  lockedT = -Infinity; // times equal to or below this cannot be edited
   
   constructor() {
     this.board = {};
@@ -40,12 +41,16 @@ class ConwayState {
   setStateAt(x, y, t, newState) {
     this.errorIfNoDefaultState();
     
+    // break early (do nothing) if time is locked
+    if (this.lockedT >= t) return;
+    
     let stateString = `${x},${y}`;
     let defaultState = this.defaultStateFunc(x, y, t);
     
     if (newState == defaultState) {
       if (t in this.board) {
         this.board[t].set.delete(stateString);
+        this.board[t].turnsIdle = 0;
         
         if (this.board[t].set.size == 0) {
           delete this.board[t];
@@ -53,7 +58,9 @@ class ConwayState {
       }
     } else {
       if (!(t in this.board)) {
-        this.board[t] = { set: new Set() };
+        this.board[t] = { set: new Set(), turnsIdle: 0 };
+      } else {
+        this.board[t].turnsIdle = 0;
       }
       
       this.board[t].set.add(stateString);
@@ -64,6 +71,34 @@ class ConwayState {
     this.errorIfNoDefaultState();
     
     this.setStateAt(x, y, t, !this.getStateAt(x, y, t));
+  }
+  
+  incrementTurnIdles() {
+    for (let t in this.board) {
+      this.board[t].turnsIdle++;
+    }
+  }
+  
+  gcIdleTimes() {
+    for (let t in this.board) {
+      if (this.board[t].turnsIdle > CONWAYS_GC_IDLE_TIME) {
+        delete this.board[t];
+      }
+    }
+  }
+  
+  getLockedTime() {
+    return this.lockedT;
+  }
+  
+  setLockedTime(t) {
+    this.lockedT = t;
+  }
+  
+  setLockedTimeIfGreater(t) {
+    if (t > this.lockedT) {
+      this.setLockedTime(t);
+    }
   }
 }
 
@@ -138,5 +173,12 @@ class ConwaySimulator {
     
     this.currentT++;
     this.turn++;
+    
+    this.boardState.incrementTurnIdles();
+    this.boardState.gcIdleTimes();
+    
+    // lock times earlier than threshold (this has no effect for now becuase things cannot influence past)
+    
+    this.boardState.setLockedTimeIfGreater(t - CONWAYS_LOCK_IN_IDLE_TIME);
   }
 }
