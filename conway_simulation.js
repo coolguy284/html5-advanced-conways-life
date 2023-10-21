@@ -71,4 +71,24 @@ class ConwaySimulator {
   setSimulationArea(x1, y1, x2, y2) {
     this.simulationArea = { x1, y1, x2, y2 };
   }
+  
+  // https://en.wikipedia.org/wiki/Conway's_Game_of_Life
+  // state is bool, liveNeighbors is typically integer but can be decimal
+  cellNextStateNumerical(currentState, liveNeighbors) {
+    if (currentState == true) {
+      if (liveNeighbors < 2) {
+        return false;
+      } else if (liveNeighbors <= 3) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      if (liveNeighbors == 3) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
 }

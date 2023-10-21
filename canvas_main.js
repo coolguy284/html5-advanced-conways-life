@@ -85,11 +85,15 @@ async function renderFrameLoop() {
   
   renderFrameLoopStarted = true;
   
+  renderFrame();
+  
+  await new Promise(r => setTimeout(r, 1000));
+  
   while (true) {
+    conwaySim.runOneTurn();
+    
     renderFrame();
     
-    for (let i = 0; i < 100; i++) {
-      await new Promise(r => requestAnimationFrame(r));
-    }
+    await new Promise(r => setTimeout(r, 1000));
   }
 }

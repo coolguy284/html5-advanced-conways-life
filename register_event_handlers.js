@@ -3,8 +3,7 @@ addEventListener('load', () => {
   resetCanvasSize();
   
   // start the rendering frame loop
-  //renderFrameLoop();
-  renderFrame();
+  renderFrameLoop();
 });
 
 addEventListener('resize', () => {
