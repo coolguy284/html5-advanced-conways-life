@@ -1,0 +1,4 @@
+add object mangement funcs, objects have no functionality
+render simulation boundary and objects
+give objects functionality slowly
+add functions to shift view forwards and backwards in time in independence of simulated time

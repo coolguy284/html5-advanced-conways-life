@@ -35,6 +35,7 @@ let gosperGliderGun = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 ];
 
+// y coordinate is flipped as higher array indices should appear lower visually
 let makeArrayReadingFunc = (array, startingX, startingY) => {
   return (x, y, t) => {
     x -= startingX;
