@@ -23,8 +23,8 @@ function drawConways(ctx) {
   // draw whether each cell is filled in or not
   for (let j = -numSquaresY; j <= numSquaresY; j++) {
     for (let i = -numSquaresX; i <= numSquaresX; i++) {
-      if (true) {
-        ctx.fillStyle = 'red';
+      if (false) {
+        ctx.fillStyle = 'white';
         ctx.fillRect(
           ...worldSpaceToScreenSpace(i - 0.5, j - 0.5),
           squareSize, squareSize
@@ -33,11 +33,12 @@ function drawConways(ctx) {
     }
   }
   
-  ctx.lineWidth = getScreenPixelsPerWorldUnit() * 0.1;
+  // set line drawing parameters
+  ctx.lineWidth = getScreenPixelsPerWorldUnit() * BORDERS_WIDTH;
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
   
   // draw the vertical gridlines
   for (let i = -numLinesX; i <= numLinesX + 1; i++) {
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
     ctx.beginPath();
     ctx.moveTo(...worldSpaceToScreenSpace(i - 0.5, -numLinesY - 1));
     ctx.lineTo(...worldSpaceToScreenSpace(i - 0.5, numLinesY + 1));
@@ -46,7 +47,6 @@ function drawConways(ctx) {
   
   // draw the horizontal gridlines
   for (let i = -numLinesY; i <= numLinesY + 1; i++) {
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
     ctx.beginPath();
     ctx.moveTo(...worldSpaceToScreenSpace(-numLinesX - 1, i - 0.5));
     ctx.lineTo(...worldSpaceToScreenSpace(numLinesX + 1, i - 0.5));
@@ -77,6 +77,8 @@ async function renderFrameLoop() {
   while (true) {
     renderFrame();
     
-    await new Promise(r => requestAnimationFrame(r));
+    for (let i = 0; i < 100; i++) {
+      await new Promise(r => requestAnimationFrame(r));
+    }
   }
 }
