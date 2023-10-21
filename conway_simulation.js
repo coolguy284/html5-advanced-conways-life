@@ -112,6 +112,58 @@ class ConwaySimulator {
   turn = 0;
   currentT = 0;
   simulationArea;
+  //simulationObjects = [
+    /*
+    example content
+    all objects are on gridlines, convention for x & y values then, is that they are -0.5, so top left corner of cell they are referring to
+    {
+      type: 'boundary',
+      startingX: 0,
+      startingY: 0,
+      direction: 'right', // all 4 directions possible
+      length: 10,
+      facing: 'left', // can be left or right, is the side (left or right), if walking from start to end of boundary, where the boundary has an effect
+      reversed: false, // makes the boundary's function get called in reverse order
+      startingT: 0,
+      endingT: 100,
+      behaviorFunc: (x, t) => {
+        // t is zero at global startingT, x is zero at first position on the boundary, and goes up by 1 for each cell along boundary
+        // function returns true if boundary should behave like live cell at that point, false for dead cell
+        // can return positive number for "stronger" or "weaker" live value, as though many neighbors are live
+      }
+    },
+    {
+      type: 'portal',
+      startingX: 0,
+      startingY: -10,
+      direction: 'right',
+      length: 10,
+      facing: 'left',
+      reversed: false,
+      startingT: 0,
+      endingT: 100,
+      links: [
+        { id: 2, strength: 1, temporalShift: 0 },
+        // strength means objects seen through the portal will have a positive number for strength value, as though many neighbors are live
+        // temporalShift means travelling through the portal will increment time by this value (!)
+      ],
+    },
+    {
+      type: 'portal',
+      startingX: 10,
+      startingY: -20,
+      direction: 'left',
+      length: 10,
+      facing: 'left',
+      reversed: false,
+      startingT: 0,
+      endingT: 100,
+      links: [
+        { id: 1, strength: 1, temporalShift: 0 },
+      ],
+    }
+    */
+  //];
   
   setDefaultState(defaultStateFunc) {
     this.boardState.setDefaultState(defaultStateFunc);
