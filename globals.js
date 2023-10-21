@@ -40,7 +40,7 @@ let makeArrayReadingFunc = (array, startingX, startingY) => {
     x -= startingX;
     y -= startingY;
     if (t == 0 && x >= 0 && x < array[0].length && y >= 0 && y < array.length) {
-      return Boolean(array[y][x]);
+      return Boolean(array[array.length - y - 1][x]);
     } else {
       return false;
     }
@@ -67,6 +67,6 @@ switch (simMode) {
     break;
   
   case 4:
-    conwaySim.setDefaultState(makeArrayReadingFunc(gosperGliderGun, -16, -5));
+    conwaySim.setDefaultState(makeArrayReadingFunc(gosperGliderGun, -17, -2));
     break;
 }

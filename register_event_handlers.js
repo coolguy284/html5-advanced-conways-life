@@ -30,7 +30,7 @@ addEventListener('mousemove', evt => {
       let screenPixelsPerWorldUnit = getScreenPixelsPerWorldUnit();
       
       posX -= (evt.clientX - pMouseX) / screenPixelsPerWorldUnit;
-      posY -= (evt.clientY - pMouseY) / screenPixelsPerWorldUnit;
+      posY -= (evt.clientY - pMouseY) / -screenPixelsPerWorldUnit;
     
       renderFrame();
     }

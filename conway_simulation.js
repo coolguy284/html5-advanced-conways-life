@@ -145,7 +145,7 @@ class ConwaySimulator {
     links: [
       { id: 2, strength: 1, temporalShift: 0 },
       // strength means objects seen through the portal will have a positive number for strength value, as though many neighbors are live
-      // temporalShift means travelling through the portal will increment time by this value (!)
+      // temporalShift means objects seen through the portal will be at this shift relative to the present (!)
     ],
   },
   {

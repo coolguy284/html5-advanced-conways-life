@@ -7,7 +7,7 @@ function worldSpaceToScreenSpace(x, y) {
   
   return [
     canvas.width / 2 + (x - posX) * screenPixelsPerWorldUnit,
-    canvas.height / 2 + (y - posY) * screenPixelsPerWorldUnit,
+    canvas.height / 2 + (y - posY) * -screenPixelsPerWorldUnit,
   ];
 }
 
@@ -16,7 +16,7 @@ function screenSpaceToWorldSpace(x, y) {
   
   return [
     (x - canvas.width / 2) / screenPixelsPerWorldUnit + posX,
-    (y - canvas.height / 2) / screenPixelsPerWorldUnit + posY,
+    (y - canvas.height / 2) / -screenPixelsPerWorldUnit + posY,
   ];
 }
 
@@ -37,7 +37,7 @@ function drawConways(ctx) {
       if (conwaySim.boardState.getStateAt(i, j, conwaySim.currentT)) {
         ctx.fillStyle = 'white';
         ctx.fillRect(
-          ...worldSpaceToScreenSpace(i - 0.5, j - 0.5),
+          ...worldSpaceToScreenSpace(i - 0.5, j + 0.5),
           squareSize, squareSize
         );
       }
@@ -80,6 +80,7 @@ function renderFrame() {
   // clear canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   
+  // draw grid and cells
   drawConways(ctx);
 }
 
