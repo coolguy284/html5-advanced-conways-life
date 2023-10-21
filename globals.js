@@ -35,8 +35,10 @@ let gosperGliderGun = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 ];
 
-let makeArrayReadingFunc = (array) => {
+let makeArrayReadingFunc = (array, startingX, startingY) => {
   return (x, y, t) => {
+    x -= startingX;
+    y -= startingY;
     if (t == 0 && x >= 0 && x < array[0].length && y >= 0 && y < array.length) {
       return Boolean(array[y][x]);
     } else {
@@ -57,14 +59,14 @@ switch (simMode) {
     break;
   
   case 2:
-    conwaySim.setDefaultState(makeArrayReadingFunc(smallStableThing));
+    conwaySim.setDefaultState(makeArrayReadingFunc(smallStableThing, 0, 0));
     break;
   
   case 3:
-    conwaySim.setDefaultState(makeArrayReadingFunc(glider));
+    conwaySim.setDefaultState(makeArrayReadingFunc(glider, -1, -1));
     break;
   
   case 4:
-    conwaySim.setDefaultState(makeArrayReadingFunc(gosperGliderGun));
+    conwaySim.setDefaultState(makeArrayReadingFunc(gosperGliderGun, -16, -5));
     break;
 }
