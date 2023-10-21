@@ -100,6 +100,11 @@ class ConwayState {
       this.setLockedTime(t);
     }
   }
+  
+  resetChanges() {
+    this.board = {};
+    this.lockedT = -Infinity;
+  }
 }
 
 class ConwaySimulator {
@@ -180,5 +185,11 @@ class ConwaySimulator {
     // lock times earlier than threshold (this has no effect for now becuase things cannot influence past)
     
     this.boardState.setLockedTimeIfGreater(t - CONWAYS_LOCK_IN_IDLE_TIME);
+  }
+  
+  resetSimulation() {
+    this.boardState.resetChanges();
+    this.turn = 0;
+    this.currentT = 0;
   }
 }

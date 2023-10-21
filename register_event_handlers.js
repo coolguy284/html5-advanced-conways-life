@@ -47,7 +47,15 @@ addEventListener('wheel', evt => {
 });
 
 addEventListener('keydown', evt => {
-  if (evt.key == ' ') {
-    simulationRunning = !simulationRunning;
+  switch (evt.key) {
+    case ' ':
+      simulationRunning = !simulationRunning;
+      renderFrame();
+      break;
+    
+    case 'r':
+      conwaySim.resetSimulation();
+      renderFrame();
+      break;
   }
 });
