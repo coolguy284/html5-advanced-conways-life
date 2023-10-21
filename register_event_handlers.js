@@ -41,7 +41,7 @@ addEventListener('mousemove', evt => {
 });
 
 addEventListener('wheel', evt => {
-  posScale = Math.max(MIN_POS_SCALE, posScale * 10 ** -(evt.deltaY / SCROLL_INCREMENT_FACTOR));
+  posScale = Math.min(Math.max(posScale * 10 ** -(evt.deltaY / SCROLL_INCREMENT_FACTOR), MIN_POS_SCALE), MAX_POS_SCALE);
   
   renderFrame();
 });

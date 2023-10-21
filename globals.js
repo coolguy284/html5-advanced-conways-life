@@ -9,7 +9,7 @@ let conwaySim = new ConwaySimulator();
 
 conwaySim.setSimulationArea(-50, -50, 50, 50);
 
-let simMode = 3;
+let simMode = 4;
 
 // https://en.wikipedia.org/wiki/Conway's_Game_of_Life
 let smallStableThing = [
