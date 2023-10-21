@@ -40,3 +40,9 @@ addEventListener('mousemove', evt => {
     pMouseY = evt.clientY;
   }
 });
+
+addEventListener('wheel', evt => {
+  posScale = Math.max(MIN_POS_SCALE, posScale * 10 ** -(evt.deltaY / SCROLL_INCREMENT_FACTOR));
+  
+  renderFrame();
+});
