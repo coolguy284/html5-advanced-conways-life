@@ -28,8 +28,12 @@ addEventListener('mouseup', () => {
 addEventListener('mousemove', evt => {
   if (mouseIsDown) {
     if (pMouseX != null && pMouseY != null) {
-      posX += (evt.clientX - pMouseX) * posScale;
-      posY += (evt.clientY - pMouseY) * posScale;
+      let screenPixelsPerWorldUnit = getScreenPixelsPerWorldUnit();
+      
+      posX -= (evt.clientX - pMouseX) / screenPixelsPerWorldUnit;
+      posY -= (evt.clientY - pMouseY) / screenPixelsPerWorldUnit;
+    
+      renderFrame();
     }
     
     pMouseX = evt.clientX;
