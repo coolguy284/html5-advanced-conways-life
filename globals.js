@@ -3,12 +3,13 @@ let renderFrameLoopStarted = false;
 let posX = 0;
 let posY = 0;
 let posScale = 0.1;
+let simulationRunning = false;
 
 let conwaySim = new ConwaySimulator();
 
-conwaySim.setSimulationArea(-10, -10, 10, 10);
+conwaySim.setSimulationArea(-50, -50, 50, 50);
 
-let simMode = 1;
+let simMode = 3;
 
 // https://en.wikipedia.org/wiki/Conway's_Game_of_Life
 let smallStableThing = [

@@ -34,7 +34,7 @@ function drawConways(ctx) {
   // draw whether each cell is filled in or not
   for (let j = worldSpaceStartY; j <= worldSpaceEndY; j++) {
     for (let i = worldSpaceStartX; i <= worldSpaceEndX; i++) {
-      if (conwaySim.boardState.getStateAt(i, j, 0)) {
+      if (conwaySim.boardState.getStateAt(i, j, conwaySim.currentT)) {
         ctx.fillStyle = 'white';
         ctx.fillRect(
           ...worldSpaceToScreenSpace(i - 0.5, j - 0.5),
@@ -67,9 +67,6 @@ function drawConways(ctx) {
 
 // draws clock onto canvas
 function renderFrame() {
-  // get current date
-  let now = new Date();
-  
   // get context
   let ctx = canvas.getContext('2d');
   
@@ -87,13 +84,15 @@ async function renderFrameLoop() {
   
   renderFrame();
   
-  await new Promise(r => setTimeout(r, 1000));
+  await new Promise(r => setTimeout(r, CONWAYS_TURN_DELAY));
   
   while (true) {
-    conwaySim.runOneTurn();
+    if (simulationRunning) {
+      conwaySim.runOneTurn();
+      
+      renderFrame();
+    }
     
-    renderFrame();
-    
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise(r => setTimeout(r, CONWAYS_TURN_DELAY));
   }
 }

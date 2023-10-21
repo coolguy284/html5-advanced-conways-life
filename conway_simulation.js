@@ -74,7 +74,7 @@ class ConwaySimulator {
   
   // https://en.wikipedia.org/wiki/Conway's_Game_of_Life
   // state is bool, liveNeighbors is typically integer but can be decimal
-  cellNextStateNumerical(currentState, liveNeighbors) {
+  getCellNextStateNumerical(currentState, liveNeighbors) {
     if (currentState == true) {
       if (liveNeighbors < 2) {
         return false;
@@ -90,5 +90,43 @@ class ConwaySimulator {
         return false;
       }
     }
+  }
+  
+  getCellLiveNeighbors(x, y, t) {
+    let liveNeighbors = 0;
+    
+    // 4 cartesian directions are easy
+    
+    liveNeighbors += this.boardState.getStateAt(x + 1, y, t);
+    liveNeighbors += this.boardState.getStateAt(x - 1, y, t);
+    liveNeighbors += this.boardState.getStateAt(x, y + 1, t);
+    liveNeighbors += this.boardState.getStateAt(x, y - 1, t);
+    
+    // for now the diagonals are easy too, but will eventually make this a more complicated process
+    
+    liveNeighbors += this.boardState.getStateAt(x + 1, y + 1, t);
+    liveNeighbors += this.boardState.getStateAt(x + 1, y - 1, t);
+    liveNeighbors += this.boardState.getStateAt(x - 1, y + 1, t);
+    liveNeighbors += this.boardState.getStateAt(x - 1, y - 1, t);
+    
+    return liveNeighbors;
+  }
+  
+  runOneTurn() {
+    let t = this.currentT;
+    
+    for (let y = this.simulationArea.y1; y < this.simulationArea.y2; y++) {
+      for (let x = this.simulationArea.x1; x < this.simulationArea.x2; x++) {
+        let liveNeighbors = this.getCellLiveNeighbors(x, y, t);
+        
+        let cellCurrentState = this.boardState.getStateAt(x, y, t);
+        
+        let cellNextState = this.getCellNextStateNumerical(cellCurrentState, liveNeighbors);
+        
+        this.boardState.setStateAt(x, y, t + 1, cellNextState);
+      }
+    }
+    
+    this.currentT++;
   }
 }

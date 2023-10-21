@@ -45,3 +45,9 @@ addEventListener('wheel', evt => {
   
   renderFrame();
 });
+
+addEventListener('keydown', evt => {
+  if (evt.key == ' ') {
+    simulationRunning = !simulationRunning;
+  }
+});
