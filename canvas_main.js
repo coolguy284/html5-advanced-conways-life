@@ -20,6 +20,34 @@ function screenSpaceToWorldSpace(x, y) {
   ];
 }
 
+function drawSlabObject(ctx, startingX, startingY, direction, length, facing) {
+  ctx.beginPath();
+  ctx.moveTo(
+    ...worldSpaceToScreenSpace(
+      ...getShiftedCoordsBasedOnSide(
+        ...getWorldSpaceCorner(startingX, startingY, 'bottom left'),
+        direction,
+        facing,
+        OBJECTS_WIDTH / 2
+      )
+    )
+  );
+  ctx.lineTo(
+    ...worldSpaceToScreenSpace(
+      ...getShiftedCoordsBasedOnSide(
+        ...getWorldSpaceCorner(
+          ...getEndingCoords(startingX, startingY, direction, length),
+          'bottom left'
+        ),
+        direction,
+        facing,
+        OBJECTS_WIDTH / 2
+      )
+    )
+  );
+  ctx.stroke();
+}
+
 // draws the conway's game of life grid onto the string
 function drawConways(ctx) {
   // grid vars
@@ -68,7 +96,7 @@ function drawConways(ctx) {
   }
   
   // draw simulation boundary
-  ctx.strokeStyle = 'red';
+  ctx.strokeStyle = SIMULATION_BOUNDARY_COLOR;
   ctx.lineWidth = getScreenPixelsPerWorldUnit() * SIMULATION_BOUNDARY_WIDTH;
   
   ctx.beginPath();
@@ -97,34 +125,17 @@ function drawConways(ctx) {
     if (timeValueShown >= simObject.startingT && timeValueShown <= simObject.endingT) {
       switch (simObject.type) {
         case 'boundary':
-          ctx.strokeStyle = 'lime';
+          ctx.strokeStyle = BOUNDARY_COLOR;
           ctx.lineWidth = getScreenPixelsPerWorldUnit() * OBJECTS_WIDTH;
           
-          ctx.beginPath();
-          ctx.moveTo(
-            ...worldSpaceToScreenSpace(
-              ...getShiftedCoordsBasedOnSide(
-                ...getWorldSpaceCorner(simObject.startingX, simObject.startingY, 'bottom left'),
-                simObject.direction,
-                simObject.facing,
-                OBJECTS_WIDTH / 2
-              )
-            )
-          );
-          ctx.lineTo(
-            ...worldSpaceToScreenSpace(
-              ...getShiftedCoordsBasedOnSide(
-                ...getWorldSpaceCorner(
-                  ...getEndingCoords(simObject.startingX, simObject.startingY, simObject.direction, simObject.length),
-                  'bottom left'
-                ),
-                simObject.direction,
-                simObject.facing,
-                OBJECTS_WIDTH / 2
-              )
-            )
-          );
-          ctx.stroke();
+          drawSlabObject(ctx, simObject.startingX, simObject.startingY, simObject.direction, simObject.length, simObject.facing);
+          break;
+        
+        case 'portal':
+          ctx.strokeStyle = PORTAL_COLOR;
+          ctx.lineWidth = getScreenPixelsPerWorldUnit() * OBJECTS_WIDTH;
+          
+          drawSlabObject(ctx, simObject.startingX, simObject.startingY, simObject.direction, simObject.length, simObject.facing);
           break;
       }
     }

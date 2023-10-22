@@ -1,7 +1,19 @@
-add object mangement funcs, objects have no functionality
-render simulation boundary and objects
 give objects functionality slowly
-add functions to shift view forwards and backwards in time in independence of simulated time
 
 low priority:
 make functions error on invalid input
+
+map:
+  rendering              - done
+    cells                - done
+    grid                 - done
+    simulation boundary  - done
+    boundaries           - done
+    portals              - done
+  simulation             
+    main                 - done
+    boundaries           
+    portals              
+      main               
+      strength           
+      temporalShift      
