@@ -1,19 +1,35 @@
 give objects functionality slowly
+add interactability like initial state customization, drawing in objects, so full on edit mode with saving to localstorage and export functionality (copy paste the text box or get a file download) and reverse for import
 
 low priority:
 make functions error on invalid input
 
-map:
-  rendering              - done
-    cells                - done
-    grid                 - done
-    simulation boundary  - done
-    boundaries           - done
-    portals              - done
-  simulation             
-    main                 - done
-    boundaries           
-    portals              
-      main               
-      strength           
-      temporalShift      
+roadmap:
+  rendering                      - done
+    cells                          - done
+    grid                           - done
+    simulation boundary            - done
+    boundaries                     - done
+    portals                        - done
+  simulation                     - not yet
+    main                           - done
+    boundaries                     - not yet
+    portals                        - not yet
+      main                         - not yet
+      strength                     - not yet
+      temporalShift                - not yet
+  interactability                - not yet
+    running view                   - done
+      move                           - done
+      scroll                         - done
+      start/stop                     - done
+      reset                          - done
+      detatch & move                 - done       (detatch from current time and move forwards / backwards)
+    editor view                    - not yet
+      edit initial state             - not yet
+      switch between many states     - not yet
+      create / delete objs           - not yet
+      save to localstorage           - not yet
+      import / export                - not yet
+        textbox                        - not yet
+        download / load                - not yet
