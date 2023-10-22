@@ -8,4 +8,4 @@ let MIN_POS_SCALE = 0.005;
 let MAX_POS_SCALE = 5;
 let CONWAYS_TURN_DELAY = 10; // in milliseconds
 let CONWAYS_LOCK_IN_IDLE_TIME = 100; // number of turns that a time instant goes untouched before its considered "locked"
-let CONWAYS_GC_IDLE_TIME = 200; // number of turns that a time instant goes untouched before its state is simply removed
+let CONWAYS_GC_IDLE_TIME = 10000; // number of turns that a time instant goes untouched before its state is simply removed
