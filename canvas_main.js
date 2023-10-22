@@ -69,7 +69,7 @@ function drawConways(ctx) {
   
   // draw simulation boundary
   ctx.strokeStyle = 'red';
-  ctx.lineWidth = getScreenPixelsPerWorldUnit() * OBJECTS_WIDTH;
+  ctx.lineWidth = getScreenPixelsPerWorldUnit() * SIMULATION_BOUNDARY_WIDTH;
   
   ctx.beginPath();
   ctx.moveTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x1, conwaySim.simulationArea.y1, 'top left')));
@@ -92,7 +92,40 @@ function drawConways(ctx) {
   ctx.stroke();
   
   // draw simulation objects
-  
+  for (let simObject of conwaySim.simulationObjects) {
+    switch (simObject.type) {
+      case 'boundary':
+        ctx.strokeStyle = 'lime';
+        ctx.lineWidth = getScreenPixelsPerWorldUnit() * OBJECTS_WIDTH;
+        
+        ctx.beginPath();
+        ctx.moveTo(
+          ...worldSpaceToScreenSpace(
+            ...getShiftedCoordsBasedOnSide(
+              ...getWorldSpaceCorner(simObject.startingX, simObject.startingY, 'bottom left'),
+              simObject.direction,
+              simObject.facing,
+              OBJECTS_WIDTH / 2
+            )
+          )
+        );
+        ctx.lineTo(
+          ...worldSpaceToScreenSpace(
+            ...getShiftedCoordsBasedOnSide(
+              ...getWorldSpaceCorner(
+                ...getEndingCoords(simObject.startingX, simObject.startingY, simObject.direction, simObject.length),
+                'bottom left'
+              ),
+              simObject.direction,
+              simObject.facing,
+              OBJECTS_WIDTH / 2
+            )
+          )
+        );
+        ctx.stroke();
+        break;
+    }
+  }
   
   // print useful text information
   ctx.fillStyle = 'white';

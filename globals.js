@@ -75,7 +75,7 @@ switch (simMode) {
 }
 
 conwaySim.addBasicBoundary(
-  -10, -10,
+  0, -10,
   'right',
   21,
   -Infinity, Infinity

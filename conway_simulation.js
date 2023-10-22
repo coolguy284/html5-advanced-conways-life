@@ -5,6 +5,7 @@ function getWorldSpaceCorner(x, y, corner) {
     case 'top left': return [x - 0.5, y + 0.5];
     case 'bottom right': return [x + 0.5, y - 0.5];
     case 'top right': return [x + 0.5, y + 0.5];
+    default: throw new Error(`Invalid corner ${corner}`);
   }
 }
 
@@ -269,6 +270,7 @@ class ConwaySimulator {
       endingT,
       behaviorFunc: (x, t) => false,
     });
+    
     this.simulationObjects.push({
       type: 'boundary',
       startingX,
@@ -280,5 +282,41 @@ class ConwaySimulator {
       endingT,
       behaviorFunc: (x, t) => false,
     });
+  }
+}
+
+function getEndingCoords(startingX, startingY, direction, length) {
+  switch (direction) {
+    case 'up': return [startingX, startingY + length];
+    case 'down': return [startingX, startingY - length];
+    case 'left': return [startingX - length, startingY];
+    case 'right': return [startingX + length, startingY];
+    default: throw new Error(`Invalid direction ${direction}`);
+  }
+}
+
+// gets visually shifted coords of an object to show its facing direction
+function getShiftedCoordsBasedOnSide(x, y, direction, facing, coordShiftAmt) {
+  let scaledCoordShiftAmt;
+  
+  switch (facing) {
+    case 'left':
+      scaledCoordShiftAmt = coordShiftAmt;
+      break;
+    
+    case 'right':
+      scaledCoordShiftAmt = -coordShiftAmt;
+      break;
+    
+    default:
+      throw new Error(`Invalid facing ${facing}`);
+  }
+  
+  switch (direction) {
+    case 'up': return [x - scaledCoordShiftAmt, y];
+    case 'down': return [x + scaledCoordShiftAmt, y];
+    case 'left': return [x, y - scaledCoordShiftAmt];
+    case 'right': return [x, y + scaledCoordShiftAmt];
+    default: throw new Error(`Invalid direction ${direction}`);
   }
 }
