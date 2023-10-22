@@ -57,5 +57,10 @@ addEventListener('keydown', evt => {
       conwaySim.resetSimulation();
       renderFrame();
       break;
+    
+    case 'f':
+      conwaySim.runOneTurn();
+      renderFrame();
+      break;
   }
 });
