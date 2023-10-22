@@ -258,7 +258,10 @@ class ConwaySimulator {
   }
   
   // adds a basic double sided boundary
-  addBasicBoundary(startingX, startingY, direction, length, startingT, endingT) {
+  addBasicBoundary(
+    startingX, startingY, direction, length,
+    startingT, endingT
+  ) {
     this.simulationObjects.push({
       type: 'boundary',
       startingX,
@@ -280,6 +283,80 @@ class ConwaySimulator {
       facing: 'right',
       startingT,
       endingT,
+      behaviorFunc: (x, t) => false,
+    });
+  }
+  
+  // adds a portal pair, with boundaries on the back
+  addPortalPairWithBackBoundaries(
+    firstStartingX, firstStartingY, firstDirection, firstFacing, firstReversed,
+    secondStartingX, secondStartingY, secondDirection, secondFacing, secondReversed,
+    length,
+    firstStaringT, firstEndingT,
+    temporalShift // shift is how far the second portal is "in the future" compared to the first
+  ) {
+    this.simulationObjects.push({
+      type: 'portal',
+      startingX: firstStartingX,
+      startingY: firstStartingY,
+      direction: firstDirection,
+      length,
+      facing: firstFacing,
+      reversed: firstReversed,
+      startingT: firstStaringT,
+      endingT: firstEndingT,
+      links: [
+        {
+          id: this.simulationObjects.length + 2,
+          strength: 1,
+          temporalShift: temporalShift,
+        },
+      ],
+    });
+    
+    this.simulationObjects.push({
+      type: 'boundary',
+      startingX: firstStartingX,
+      startingY: firstStartingY,
+      direction: firstDirection,
+      length,
+      facing: firstFacing == 'left' ? 'right' : 'left',
+      startingT: firstStaringT,
+      endingT: firstEndingT,
+      behaviorFunc: (x, t) => false,
+    });
+    
+    let secondStartingT = firstStaringT + temporalShift;
+    let secondEndingT = firstEndingT + temporalShift;
+    
+    this.simulationObjects.push({
+      type: 'portal',
+      startingX: secondStartingX,
+      startingY: secondStartingY,
+      direction: secondDirection,
+      length,
+      facing: secondFacing,
+      reversed: secondReversed,
+      startingT: secondStartingT,
+      endingT: secondEndingT,
+      links: [
+        {
+          id: this.simulationObjects.length - 2,
+          strength: 1,
+          temporalShift: -temporalShift,
+        },
+      ],
+    });
+    
+    this.simulationObjects.push({
+      type: 'boundary',
+      startingX: secondStartingX,
+      startingY: secondStartingY,
+      direction: secondDirection,
+      length,
+      facing: secondFacing == 'left' ? 'right' : 'left',
+      startingT: secondStartingT,
+      endingT: secondEndingT,
       behaviorFunc: (x, t) => false,
     });
   }
