@@ -40,7 +40,7 @@ function drawConways(ctx) {
       if (conwaySim.boardState.getStateAt(i, j, timeValueShown)) {
         ctx.fillStyle = 'white';
         ctx.fillRect(
-          ...worldSpaceToScreenSpace(i - 0.5, j + 0.5),
+          ...worldSpaceToScreenSpace(...getWorldSpaceCorner(i, j, 'top left')),
           squareSize, squareSize
         );
       }
@@ -66,6 +66,33 @@ function drawConways(ctx) {
     ctx.lineTo(...worldSpaceToScreenSpace(worldSpaceEndX, i + 0.5));
     ctx.stroke();
   }
+  
+  // draw simulation boundary
+  ctx.strokeStyle = 'red';
+  ctx.lineWidth = getScreenPixelsPerWorldUnit() * OBJECTS_WIDTH;
+  
+  ctx.beginPath();
+  ctx.moveTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x1, conwaySim.simulationArea.y1, 'top left')));
+  ctx.lineTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x1, conwaySim.simulationArea.y2, 'bottom left')));
+  ctx.stroke();
+  
+  ctx.beginPath();
+  ctx.moveTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x2, conwaySim.simulationArea.y1, 'top right')));
+  ctx.lineTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x2, conwaySim.simulationArea.y2, 'bottom right')));
+  ctx.stroke();
+  
+  ctx.beginPath();
+  ctx.moveTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x1, conwaySim.simulationArea.y1, 'top left')));
+  ctx.lineTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x2, conwaySim.simulationArea.y1, 'top right')));
+  ctx.stroke();
+  
+  ctx.beginPath();
+  ctx.moveTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x1, conwaySim.simulationArea.y2, 'bottom left')));
+  ctx.lineTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x2, conwaySim.simulationArea.y2, 'bottom right')));
+  ctx.stroke();
+  
+  // draw simulation objects
+  
   
   // print useful text information
   ctx.fillStyle = 'white';

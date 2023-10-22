@@ -73,3 +73,10 @@ switch (simMode) {
     conwaySim.setDefaultState(makeArrayReadingFunc(gosperGliderGun, -17, -2));
     break;
 }
+
+conwaySim.addBasicBoundary(
+  -10, -10,
+  'right',
+  21,
+  -Infinity, Infinity
+);

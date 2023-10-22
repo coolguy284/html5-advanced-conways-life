@@ -1,3 +1,13 @@
+// gets the corner coordinate of the given cell
+function getWorldSpaceCorner(x, y, corner) {
+  switch (corner) {
+    case 'bottom left': return [x - 0.5, y - 0.5];
+    case 'top left': return [x - 0.5, y + 0.5];
+    case 'bottom right': return [x + 0.5, y - 0.5];
+    case 'top right': return [x + 0.5, y + 0.5];
+  }
+}
+
 // class for the state of the conway board
 // default state func accepts (x, y, t) and returns true or false for state
 // this object only stores changes to the default state
@@ -112,58 +122,59 @@ class ConwaySimulator {
   turn = 0;
   currentT = 0;
   simulationArea;
-  //simulationObjects = [
-  /*
-  example content
-  all objects are on gridlines, convention for x & y values then, is that they are -0.5, so bottom left corner of cell they are referring to
-  {
-    type: 'boundary',
-    startingX: 0,
-    startingY: 0,
-    direction: 'right', // all 4 directions possible
-    length: 10,
-    facing: 'left', // can be left or right, is the side (left or right), if walking from start to end of boundary, where the boundary has an effect
-    reversed: false, // makes the boundary's function get called in reverse order
-    startingT: 0,
-    endingT: 100,
-    behaviorFunc: (x, t) => {
-      // t is zero at global startingT, x is zero at first position on the boundary, and goes up by 1 for each cell along boundary
-      // function returns true if boundary should behave like live cell at that point, false for dead cell
-      // can return positive number for "stronger" or "weaker" live value, as though many neighbors are live
+  simulationObjects = [
+    /*
+    example content
+    all objects are on gridlines, convention for x & y values then, is that they are -0.5, so bottom left corner of cell they are referring to
+    {
+      type: 'boundary',
+      startingX: 0,
+      startingY: 0,
+      direction: 'right', // all 4 directions possible
+      length: 10,
+      facing: 'left', // can be left or right, is the side (left or right), if walking from start to end of boundary, where the boundary has an effect
+      reversed: false, // makes the boundary's function get called in reverse order
+      startingT: 0,
+      endingT: 100,
+      behaviorFunc: (x, t) => {
+        // t is zero at global startingT, x is zero at first position on the boundary, and goes up by 1 for each cell along boundary
+        // function returns true if boundary should behave like live cell at that point, false for dead cell
+        // can return positive number for "stronger" or "weaker" live value, as though many neighbors are live
+        // function might get called with x values of -1 or equal to length (due to corner checking)
+      }
+    },
+    {
+      type: 'portal',
+      startingX: 0,
+      startingY: -10,
+      direction: 'right',
+      length: 10,
+      facing: 'left',
+      reversed: false,
+      startingT: 0,
+      endingT: 100,
+      links: [
+        { id: 2, strength: 1, temporalShift: 0 },
+        // strength means objects seen through the portal will have a positive number for strength value, as though many neighbors are live
+        // temporalShift means objects seen through the portal will be at this shift relative to the present (!)
+      ],
+    },
+    {
+      type: 'portal',
+      startingX: 10,
+      startingY: -20,
+      direction: 'left',
+      length: 10,
+      facing: 'left',
+      reversed: false,
+      startingT: 0,
+      endingT: 100,
+      links: [
+        { id: 1, strength: 1, temporalShift: 0 },
+      ],
     }
-  },
-  {
-    type: 'portal',
-    startingX: 0,
-    startingY: -10,
-    direction: 'right',
-    length: 10,
-    facing: 'left',
-    reversed: false,
-    startingT: 0,
-    endingT: 100,
-    links: [
-      { id: 2, strength: 1, temporalShift: 0 },
-      // strength means objects seen through the portal will have a positive number for strength value, as though many neighbors are live
-      // temporalShift means objects seen through the portal will be at this shift relative to the present (!)
-    ],
-  },
-  {
-    type: 'portal',
-    startingX: 10,
-    startingY: -20,
-    direction: 'left',
-    length: 10,
-    facing: 'left',
-    reversed: false,
-    startingT: 0,
-    endingT: 100,
-    links: [
-      { id: 1, strength: 1, temporalShift: 0 },
-    ],
-  }
-  */
-  //];
+    */
+  ];
   
   setDefaultState(defaultStateFunc) {
     this.boardState.setDefaultState(defaultStateFunc);
@@ -216,8 +227,8 @@ class ConwaySimulator {
   runOneTurn() {
     let t = this.currentT;
     
-    for (let y = this.simulationArea.y1; y < this.simulationArea.y2; y++) {
-      for (let x = this.simulationArea.x1; x < this.simulationArea.x2; x++) {
+    for (let y = this.simulationArea.y1; y <= this.simulationArea.y2; y++) {
+      for (let x = this.simulationArea.x1; x <= this.simulationArea.x2; x++) {
         let liveNeighbors = this.getCellLiveNeighbors(x, y, t);
         
         let cellCurrentState = this.boardState.getStateAt(x, y, t);
@@ -243,5 +254,31 @@ class ConwaySimulator {
     this.boardState.resetChanges();
     this.turn = 0;
     this.currentT = 0;
+  }
+  
+  // adds a basic double sided boundary
+  addBasicBoundary(startingX, startingY, direction, length, startingT, endingT) {
+    this.simulationObjects.push({
+      type: 'boundary',
+      startingX,
+      startingY,
+      direction,
+      length,
+      facing: 'left',
+      startingT,
+      endingT,
+      behaviorFunc: (x, t) => false,
+    });
+    this.simulationObjects.push({
+      type: 'boundary',
+      startingX,
+      startingY,
+      direction,
+      length,
+      facing: 'right',
+      startingT,
+      endingT,
+      behaviorFunc: (x, t) => false,
+    });
   }
 }
