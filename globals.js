@@ -1,8 +1,8 @@
 // global variables
 let renderFrameLoopStarted = false;
-let posX = 0;
-let posY = 0;
-let posScale = 0.1;
+let posX = INITIAL_POS_X;
+let posY = INITIAL_POS_Y;
+let posScale = INITIAL_POS_SCALE;
 let simulationRunning = false;
 
 let conwaySim = new ConwaySimulator();
