@@ -4,6 +4,8 @@ let posX = INITIAL_POS_X;
 let posY = INITIAL_POS_Y;
 let posScale = INITIAL_POS_SCALE;
 let simulationRunning = false;
+let timeSynced = true; // if false, time value shown on screen is not currently simulated time
+let detatchedTimeValue = 0; // value for detatched time if it is detatched
 
 let conwaySim = new ConwaySimulator();
 

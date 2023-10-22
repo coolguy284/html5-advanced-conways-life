@@ -58,8 +58,35 @@ addEventListener('keydown', evt => {
       renderFrame();
       break;
     
+    case 'd':
+      if (timeSynced) {
+        conwaySim.runOneTurn();
+        renderFrame();
+      } else {
+        detatchedTimeValue++;
+        renderFrame();
+      }
+      break;
+    
+    case 'a':
+      if (timeSynced) {
+        timeSynced = false;
+        detatchedTimeValue = conwaySim.currentT - 1;
+        renderFrame();
+      } else {
+        detatchedTimeValue--;
+        renderFrame();
+      }
+      break;
+    
     case 'f':
-      conwaySim.runOneTurn();
+      if (timeSynced) {
+        timeSynced = false;
+        detatchedTimeValue = conwaySim.currentT;
+      } else {
+        timeSynced = true;
+        detatchedTimeValue = null;
+      }
       renderFrame();
       break;
   }

@@ -31,10 +31,13 @@ function drawConways(ctx) {
   let worldSpaceStartY = Math.floor(posY - (worldSpaceScreenHeight / 2));
   let worldSpaceEndY = Math.ceil(posY + (worldSpaceScreenHeight / 2));
   
+  // other vars
+  let timeValueShown = timeSynced ? conwaySim.currentT : detatchedTimeValue;
+  
   // draw whether each cell is filled in or not
   for (let j = worldSpaceStartY; j <= worldSpaceEndY; j++) {
     for (let i = worldSpaceStartX; i <= worldSpaceEndX; i++) {
-      if (conwaySim.boardState.getStateAt(i, j, conwaySim.currentT)) {
+      if (conwaySim.boardState.getStateAt(i, j, timeValueShown)) {
         ctx.fillStyle = 'white';
         ctx.fillRect(
           ...worldSpaceToScreenSpace(i - 0.5, j + 0.5),
@@ -67,9 +70,11 @@ function drawConways(ctx) {
   // print useful text information
   ctx.fillStyle = 'white';
   ctx.font = '4vh Consolas';
-  ctx.fillText(`X: ${posX.toFixed(3)}, Y: ${posY.toFixed(3)}, Scale: ${posScale.toFixed(Math.floor(-Math.log10(posScale) + 2))}`, canvas.width * 0.01, canvas.height * 0.89);
-  ctx.fillText(`Time: ${conwaySim.currentT}`, canvas.width * 0.01, canvas.height * 0.93);
-  ctx.fillText(`Simulation Running: ${simulationRunning}`, canvas.width * 0.01, canvas.height * 0.97);
+  ctx.fillText(`X: ${posX.toFixed(3)}, Y: ${posY.toFixed(3)}, Scale: ${posScale.toFixed(Math.floor(-Math.log10(posScale) + 2))}`, canvas.width * 0.01, canvas.height * 0.85);
+  ctx.fillText(`Time: ${timeValueShown}`, canvas.width * 0.01, canvas.height * 0.89);
+  ctx.fillText(`Synced: ${timeSynced}`, canvas.width * 0.01 + canvas.height * 0.3, canvas.height * 0.89);
+  ctx.fillText(`Simulation Running: ${simulationRunning}`, canvas.width * 0.01, canvas.height * 0.93);
+  ctx.fillText(`Simulation Time: ${conwaySim.currentT}`, canvas.width * 0.01, canvas.height * 0.97);
 }
 
 // draws clock onto canvas
