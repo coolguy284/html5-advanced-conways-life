@@ -71,8 +71,7 @@ function drawConways(ctx) {
   ctx.fillStyle = 'white';
   ctx.font = '4vh Consolas';
   ctx.fillText(`X: ${posX.toFixed(3)}, Y: ${posY.toFixed(3)}, Scale: ${posScale.toFixed(Math.floor(-Math.log10(posScale) + 2))}`, canvas.width * 0.01, canvas.height * 0.85);
-  ctx.fillText(`Time: ${timeValueShown}`, canvas.width * 0.01, canvas.height * 0.89);
-  ctx.fillText(`Synced: ${timeSynced}`, canvas.width * 0.01 + canvas.height * 0.3, canvas.height * 0.89);
+  ctx.fillText(`Time: ${(timeValueShown + '').padEnd(6)}  Synced: ${timeSynced}`, canvas.width * 0.01, canvas.height * 0.89);
   ctx.fillText(`Simulation Running: ${simulationRunning}`, canvas.width * 0.01, canvas.height * 0.93);
   ctx.fillText(`Simulation Time: ${conwaySim.currentT}`, canvas.width * 0.01, canvas.height * 0.97);
 }
