@@ -115,7 +115,7 @@ class ConwaySimulator {
   //simulationObjects = [
   /*
   example content
-  all objects are on gridlines, convention for x & y values then, is that they are -0.5, so top left corner of cell they are referring to
+  all objects are on gridlines, convention for x & y values then, is that they are -0.5, so bottom left corner of cell they are referring to
   {
     type: 'boundary',
     startingX: 0,
