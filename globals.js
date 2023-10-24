@@ -75,13 +75,13 @@ switch (simMode) {
 }
 
 conwaySim.addBasicBoundary(
-  0, -10, 'right', 21,
+  -10, -40, 'right', 59,
   0, Infinity
 );
 
 conwaySim.addPortalPairWithBackBoundaries(
-  15, -10, 'down', 'right', false,
-  -15, -10, 'down', 'left', true,
+  15, -5, 'down', 'right', false,
+  -15, -5, 'down', 'left', true,
   21,
   0, Infinity,
   0
