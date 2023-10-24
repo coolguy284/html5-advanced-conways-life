@@ -418,16 +418,28 @@ class BoardTraverser {
   x;
   y;
   t;
-  // transformation values below ignored for now
-  scaleX = 1;
-  scaleY = 1;
-  rotation = 0; // goes from 0 to 3, each one is 90deg more CCW
   
-  constructor(conwaySim, x, y, t) {
+  selfX_trueXScale = 1;
+  selfX_trueYScale = 0;
+  selfY_trueXScale = 0;
+  selfY_trueYScale = 1;
+  
+  constructor(
+    conwaySim,
+    x, y, t,
+    selfX_trueXScale, selfX_trueYScale,
+    selfY_trueXScale, selfY_trueYScale) {
     this.conwaySim = conwaySim;
     this.x = x;
     this.y = y;
     this.t = t;
+    
+    if (selfX_trueXScale != null) {
+      this.selfX_trueXScale = selfX_trueXScale;
+      this.selfX_trueYScale = selfX_trueYScale;
+      this.selfY_trueXScale = selfY_trueXScale;
+      this.selfY_trueYScale = selfY_trueYScale;
+    }
   }
   
   getPosition() {
@@ -438,11 +450,83 @@ class BoardTraverser {
     return this.conwaySim.getStateAt(this.x, this.y, this.t);
   }
   
-  // this function is only intended to move in a single cartesian direction by 1
+  // these functions are only intended to move in a single cartesian direction by 1
+  
+  // underlying movement and transformation functions
+  
+  trueMoveBy(x, y) {
+    return new BoardTraverser(
+      this.conwaySim,
+      this.x + x, this.y + y, this.t,
+      this.selfX_trueXScale, this.selfX_trueYScale,
+      this.selfY_trueXScale, this.selfY_trueYScale
+    );
+  }
+  
+  rotate(multipleOf90CCW) {
+    switch (multipleOf90CCW) {
+      case 0:
+        return this;
+      
+      case 1:
+        return new BoardTraverser(
+          this.conwaySim,
+          this.x, this.y, this.t,
+          -this.selfX_trueYScale, this.selfX_trueXScale,
+          -this.selfY_trueYScale, this.selfY_trueXScale
+        );
+      
+      case 2:
+        return new BoardTraverser(
+          this.conwaySim,
+          this.x, this.y, this.t,
+          -this.selfX_trueXScale, -this.selfX_trueYScale,
+          -this.selfY_trueXScale, -this.selfY_trueYScale
+        );
+      
+      case 3:
+        return new BoardTraverser(
+          this.conwaySim,
+          this.x, this.y, this.t,
+          this.selfX_trueYScale, -this.selfX_trueXScale,
+          this.selfY_trueYScale, -this.selfY_trueXScale
+        );
+    }
+  }
+  
+  flipX() {
+    return new BoardTraverser(
+      this.conwaySim,
+      this.x, this.y, this.t,
+      -this.selfX_trueXScale, this.selfX_trueYScale,
+      -this.selfY_trueXScale, this.selfY_trueYScale
+    );
+  }
+  
+  flipY() {
+    return new BoardTraverser(
+      this.conwaySim,
+      this.x, this.y, this.t,
+      this.selfX_trueXScale, -this.selfX_trueYScale,
+      this.selfY_trueXScale, -this.selfY_trueYScale
+    );
+  }
+  
+  // helper function
+  
+  getTrueMovementDelta(x, y) {
+    return [
+      this.selfX_trueXScale * x + this.selfY_trueXScale * y,
+      this.selfX_trueYScale * x + this.selfY_trueYScale * y,
+    ];
+  }
+  
+  // relative movement functions
+  
   moveBy(x, y) {
-    // for now simply step in the given direction
+    // for now simply step in the given direction applying rotation and scale
     
-    return new BoardTraverser(this.conwaySim, this.x + x, this.y + y, this.t);
+    return this.trueMoveBy(...this.getTrueMovementDelta(x, y));
   }
   
   moveLeft() { return this.moveBy(-1, 0); }
