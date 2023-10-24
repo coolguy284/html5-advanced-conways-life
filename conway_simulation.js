@@ -512,13 +512,68 @@ class BoardTraverser {
     );
   }
   
-  // helper function
+  // helper functions
   
   getTrueMovementDelta(x, y) {
     return [
       this.selfX_trueXScale * x + this.selfY_trueXScale * y,
       this.selfX_trueYScale * x + this.selfY_trueYScale * y,
     ];
+  }
+  
+  // returns an object with intersection info if true, or null if not
+  checkIfMovementDeltaIntersectsAnObject(x, y) {
+    let movementIsHorizontal = x != 0;
+    
+    for (let simObject of this.conwaySim.simulationObjects) {
+      switch (simObject.type) {
+        case 'boundary':
+        case 'portal':
+          let [ shiftedStartingX, shiftedStartingY ] = getWorldSpaceCorner(startingX, startingY, 'bottom left');
+          let [ shiftedEndingX, shiftedEndingY ] = getWorldSpaceCorner(
+            ...getEndingCoords(startingX, startingY, direction, length),
+            'bottom left'
+          );
+          
+          if (movementIsHorizontal) {
+            let possibleCollision;
+            
+            if (simObject.direction == 'down' && simObject.facing == 'right' && x > 0) {
+              possibleCollision = true;
+            } else if (simObject.direction == 'up' && simObject.facing == 'left' && x > 0) {
+              possibleCollision = true;
+            } else if (simObject.direction == 'down' && simObject.facing == 'left' && x < 0) {
+              possibleCollision = true;
+            } else if (simObject.direction == 'up' && simObject.facing == 'right' && x < 0) {
+              possibleCollision = true;
+            } else {
+              possibleCollision = false;
+            }
+            
+            // inside if statements are for collision found
+            if (possibleCollision) {
+              if (simObject.direction == 'down' && shiftedStartingY > this.y && shiftedEndingY < this.y && (x > 0 && simObject.facing == 'right' || x < 0 && simObject.facing == 'left')) {
+                let collsionYRelative = shiftedStartingY - this.y - 0.5;
+                
+                if (simObject.reversed) {
+                  collsionYRelative = simObject.length - collsionYRelative - 1;
+                }
+                
+                return {
+                  object: simObject,
+                  positionAlongObject: collsionYRelative,
+                };
+                // TODO - complete rest of cases below, then do same for vertical direction
+              } else {
+                return null;
+              }
+            } else {
+              return null;
+            }
+          }
+          break;
+      }
+    }
   }
   
   // relative movement functions
