@@ -177,9 +177,17 @@ class ConwaySimulator {
     */
   ];
   
+  // boardState passthrough methods
+  
+  getStateAt(x, y, t) {
+    return this.boardState.getStateAt(x, y, t);
+  }
+  
   setDefaultState(defaultStateFunc) {
     this.boardState.setDefaultState(defaultStateFunc);
   }
+  
+  // simulation methods
   
   setSimulationArea(x1, y1, x2, y2) {
     this.simulationArea = { x1, y1, x2, y2 };
@@ -208,19 +216,24 @@ class ConwaySimulator {
   getCellLiveNeighbors(x, y, t) {
     let liveNeighbors = 0;
     
-    // 4 cartesian directions are easy
+    // initalize board traverser
+    let traverser = new BoardTraverser(this, x, y, t);
     
-    liveNeighbors += this.boardState.getStateAt(x + 1, y, t);
-    liveNeighbors += this.boardState.getStateAt(x - 1, y, t);
-    liveNeighbors += this.boardState.getStateAt(x, y + 1, t);
-    liveNeighbors += this.boardState.getStateAt(x, y - 1, t);
+    // 4 cartesian directions are straightforward
+    liveNeighbors += traverser.moveLeft().getStateAt();
+    liveNeighbors += traverser.moveRight().getStateAt();
+    liveNeighbors += traverser.moveUp().getStateAt();
+    liveNeighbors += traverser.moveDown().getStateAt();
     
-    // for now the diagonals are easy too, but will eventually make this a more complicated process
-    
-    liveNeighbors += this.boardState.getStateAt(x + 1, y + 1, t);
-    liveNeighbors += this.boardState.getStateAt(x + 1, y - 1, t);
-    liveNeighbors += this.boardState.getStateAt(x - 1, y + 1, t);
-    liveNeighbors += this.boardState.getStateAt(x - 1, y - 1, t);
+    // diagonal values take an average of both paths (typically the same value for both unless an object is in the way)
+    liveNeighbors += traverser.moveRight().moveUp().getStateAt() * 0.5;
+    liveNeighbors += traverser.moveUp().moveRight().getStateAt() * 0.5;
+    liveNeighbors += traverser.moveRight().moveDown().getStateAt() * 0.5;
+    liveNeighbors += traverser.moveDown().moveRight().getStateAt() * 0.5;
+    liveNeighbors += traverser.moveLeft().moveUp().getStateAt() * 0.5;
+    liveNeighbors += traverser.moveUp().moveLeft().getStateAt() * 0.5;
+    liveNeighbors += traverser.moveLeft().moveDown().getStateAt() * 0.5;
+    liveNeighbors += traverser.moveDown().moveLeft().getStateAt() * 0.5;
     
     return liveNeighbors;
   }
@@ -396,4 +409,44 @@ function getShiftedCoordsBasedOnSide(x, y, direction, facing, coordShiftAmt) {
     case 'right': return [x, y + scaledCoordShiftAmt];
     default: throw new Error(`Invalid direction ${direction}`);
   }
+}
+
+// simple object to move around on the board of a conwaysim object
+// this object is designed to be immutable, movement methods return a new traverser object
+class BoardTraverser {
+  conwaySim;
+  x;
+  y;
+  t;
+  // transformation values below ignored for now
+  scaleX = 1;
+  scaleY = 1;
+  rotation = 0; // goes from 0 to 3, each one is 90deg more CCW
+  
+  constructor(conwaySim, x, y, t) {
+    this.conwaySim = conwaySim;
+    this.x = x;
+    this.y = y;
+    this.t = t;
+  }
+  
+  getPosition() {
+    return { x: this.x, y: this.y, t: this.t };
+  }
+  
+  getStateAt() {
+    return this.conwaySim.getStateAt(this.x, this.y, this.t);
+  }
+  
+  // this function is only intended to move in a single cartesian direction by 1
+  moveBy(x, y) {
+    // for now simply step in the given direction
+    
+    return new BoardTraverser(this.conwaySim, this.x + x, this.y + y, this.t);
+  }
+  
+  moveLeft() { return this.moveBy(-1, 0); }
+  moveRight() { return this.moveBy(1, 0); }
+  moveUp() { return this.moveBy(0, 1); }
+  moveDown() { return this.moveBy(0, -1); }
 }
