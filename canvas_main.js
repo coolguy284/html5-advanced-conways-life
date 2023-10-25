@@ -173,12 +173,24 @@ async function renderFrameLoop() {
   await new Promise(r => setTimeout(r, CONWAYS_TURN_DELAY));
   
   while (true) {
+    if (previousTimeAfterRender == null) {
+      previousTimeAfterRender = Date.now();
+    }
+    
     if (simulationRunning) {
       conwaySim.runOneTurn();
       
       renderFrame();
     }
     
-    await new Promise(r => setTimeout(r, CONWAYS_TURN_DELAY));
+    let timeAfterRender = Date.now();
+    
+    let timeToRender = timeAfterRender - previousTimeAfterRender;
+    
+    if (timeToRender > 0) {
+      await new Promise(r => setTimeout(r, CONWAYS_TURN_DELAY - timeToRender));
+    }
+    
+    previousTimeAfterRender = timeAfterRender;
   }
 }

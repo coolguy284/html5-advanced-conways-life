@@ -6,6 +6,7 @@ let posScale = INITIAL_POS_SCALE;
 let simulationRunning = false;
 let timeSynced = true; // if false, time value shown on screen is not currently simulated time
 let detatchedTimeValue = 0; // value for detatched time if it is detatched
+let previousTimeAfterRender;
 
 let conwaySim = new ConwaySimulator();
 
@@ -74,6 +75,7 @@ switch (simMode) {
     break;
 }
 
+/*
 conwaySim.addBasicBoundary(
   -10, -40, 'right', 59,
   0, Infinity
@@ -86,3 +88,4 @@ conwaySim.addPortalPairWithBackBoundaries(
   0, Infinity,
   0
 );
+*/

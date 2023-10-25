@@ -213,7 +213,25 @@ class ConwaySimulator {
     }
   }
   
-  getCellLiveNeighbors(x, y, t) {
+  getCellLiveNeighborsSimple(x, y, t) {
+    let liveNeighbors = 0;
+    
+    // use simple displacement offset for edges and diagonals
+    
+    liveNeighbors += this.boardState.getStateAt(x + 1, y, t);
+    liveNeighbors += this.boardState.getStateAt(x - 1, y, t);
+    liveNeighbors += this.boardState.getStateAt(x, y + 1, t);
+    liveNeighbors += this.boardState.getStateAt(x, y - 1, t);
+    
+    liveNeighbors += this.boardState.getStateAt(x + 1, y + 1, t);
+    liveNeighbors += this.boardState.getStateAt(x + 1, y - 1, t);
+    liveNeighbors += this.boardState.getStateAt(x - 1, y + 1, t);
+    liveNeighbors += this.boardState.getStateAt(x - 1, y - 1, t);
+    
+    return liveNeighbors;
+  }
+  
+  getCellLiveNeighborsAdvanced(x, y, t) {
     let liveNeighbors = 0;
     
     // initalize board traverser
@@ -236,6 +254,14 @@ class ConwaySimulator {
     liveNeighbors += traverser.moveDown().moveLeft().getStateAt() * 0.5;
     
     return liveNeighbors;
+  }
+  
+  getCellLiveNeighbors(x, y, t) {
+    if (this.simulationObjects.length > 0) {
+      return this.getCellLiveNeighborsAdvanced(x, y, t);
+    } else {
+      return this.getCellLiveNeighborsSimple(x, y, t);
+    }
   }
   
   runOneTurn() {
