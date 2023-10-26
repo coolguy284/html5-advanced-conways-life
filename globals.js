@@ -10,9 +10,7 @@ let previousTimeAfterRender;
 
 let conwaySim = new ConwaySimulator();
 
-conwaySim.setSimulationArea(-50, -50, 50, 50);
-
-let simMode = 4;
+let simMode = 7;
 
 // https://en.wikipedia.org/wiki/Conway's_Game_of_Life
 let smallStableThing = [
@@ -24,6 +22,13 @@ let glider = [
   [0, 0, 1],
   [1, 0, 1],
   [0, 1, 1],
+];
+
+let lwss = [
+  [0, 1, 1, 1, 1],
+  [1, 0, 0, 0, 1],
+  [0, 0, 0, 0, 1],
+  [1, 0, 0, 1, 0],
 ];
 
 let gosperGliderGun = [
@@ -51,6 +56,8 @@ let makeArrayReadingFunc = (array, startingX, startingY) => {
   }
 };
 
+conwaySim.setSimulationArea(-50, -50, 50, 50);
+
 switch (simMode) {
   case 1:
     conwaySim.setDefaultState((x, y, t) => {
@@ -73,19 +80,40 @@ switch (simMode) {
   case 4:
     conwaySim.setDefaultState(makeArrayReadingFunc(gosperGliderGun, -17, -2));
     break;
+  
+  case 5:
+    conwaySim.setDefaultState(makeArrayReadingFunc(gosperGliderGun, -17, -2));
+    
+    conwaySim.addBasicBoundary(
+      20, -5, 'down', 20,
+      0, Infinity
+    );
+    break;
+  
+  case 6:
+    conwaySim.setDefaultState(makeArrayReadingFunc(gosperGliderGun, -17, -2));
+    
+    conwaySim.addBasicBoundary(
+      -10, -40, 'right', 59,
+      0, Infinity
+    );
+    
+    conwaySim.addPortalPairWithBackBoundaries(
+      15, -5, 'down', 'right', false,
+      -15, -5, 'down', 'left', true,
+      21,
+      0, Infinity,
+      0
+    );
+    break;
+  
+  case 7:
+    conwaySim.setDefaultState((x, y, t) => {
+      if (y == -51) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+    break;
 }
-
-/*
-conwaySim.addBasicBoundary(
-  -10, -40, 'right', 59,
-  0, Infinity
-);
-
-conwaySim.addPortalPairWithBackBoundaries(
-  15, -5, 'down', 'right', false,
-  -15, -5, 'down', 'left', true,
-  21,
-  0, Infinity,
-  0
-);
-*/

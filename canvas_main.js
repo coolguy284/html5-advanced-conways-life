@@ -100,23 +100,23 @@ function drawConways(ctx) {
   ctx.lineWidth = getScreenPixelsPerWorldUnit() * SIMULATION_BOUNDARY_WIDTH;
   
   ctx.beginPath();
-  ctx.moveTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x1, conwaySim.simulationArea.y1, 'top left')));
-  ctx.lineTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x1, conwaySim.simulationArea.y2, 'bottom left')));
+  ctx.moveTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x1, conwaySim.simulationArea.y1, 'bottom left')));
+  ctx.lineTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x1, conwaySim.simulationArea.y2, 'top left')));
   ctx.stroke();
   
   ctx.beginPath();
-  ctx.moveTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x2, conwaySim.simulationArea.y1, 'top right')));
-  ctx.lineTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x2, conwaySim.simulationArea.y2, 'bottom right')));
+  ctx.moveTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x2, conwaySim.simulationArea.y1, 'bottom right')));
+  ctx.lineTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x2, conwaySim.simulationArea.y2, 'top right')));
   ctx.stroke();
   
   ctx.beginPath();
-  ctx.moveTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x1, conwaySim.simulationArea.y1, 'top left')));
-  ctx.lineTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x2, conwaySim.simulationArea.y1, 'top right')));
+  ctx.moveTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x1, conwaySim.simulationArea.y1, 'bottom left')));
+  ctx.lineTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x2, conwaySim.simulationArea.y1, 'bottom right')));
   ctx.stroke();
   
   ctx.beginPath();
-  ctx.moveTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x1, conwaySim.simulationArea.y2, 'bottom left')));
-  ctx.lineTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x2, conwaySim.simulationArea.y2, 'bottom right')));
+  ctx.moveTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x1, conwaySim.simulationArea.y2, 'top left')));
+  ctx.lineTo(...worldSpaceToScreenSpace(...getWorldSpaceCorner(conwaySim.simulationArea.x2, conwaySim.simulationArea.y2, 'top right')));
   ctx.stroke();
   
   // draw simulation objects
