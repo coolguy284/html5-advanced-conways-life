@@ -44,3 +44,4 @@ let COLLISION_MATRIX_VERTICAL = [
   0, // right      right         false
   1, // right      right         true
 ];
+let LIBRARY_MODE = 'js'; // options 'js' or in future 'rust-webassembly'
