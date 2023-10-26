@@ -1,4 +1,6 @@
 let _module__c284_conway_js__state_class = (() => {
+  let { CONSTANTS } = _module__c284_conway_js__constants;
+  
   // class for the state of the conway board
   // default state func accepts (x, y, t) and returns true or false for state
   // this object only stores changes to the default state
@@ -82,7 +84,7 @@ let _module__c284_conway_js__state_class = (() => {
     
     gcIdleTimes() {
       for (let t in this.board) {
-        if (this.board[t].turnsIdle > CONWAYS_GC_IDLE_TIME) {
+        if (this.board[t].turnsIdle > CONSTANTS.CONWAYS_GC_IDLE_TIME) {
           delete this.board[t];
         }
       }

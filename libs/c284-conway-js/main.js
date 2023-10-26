@@ -1,5 +1,9 @@
 let _module__c284_conway_js__main = (() => {
   let {
+    getConstants,
+    setConstants
+  } = _module__c284_conway_js__constants;
+  let {
     getEndingCoords,
     getShiftedCoordsBasedOnSide,
     getWorldSpaceCorner,
@@ -9,9 +13,11 @@ let _module__c284_conway_js__main = (() => {
   let { BoardTraverser } = _module__c284_conway_js__traverser_class;
   
   return {
+    getConstants,
     getEndingCoords,
     getShiftedCoordsBasedOnSide,
     getWorldSpaceCorner,
+    setConstants,
     ConwaySimulator,
     ConwayState,
     BoardTraverser,

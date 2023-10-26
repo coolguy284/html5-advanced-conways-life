@@ -1,3 +1,4 @@
+move simulation constants to all be part of simulation object since that makes the most sense
 add gosper glider gun gun (the puffer thing)
 print additional info
   number of live cells (assumes empty default func, so checks for size of set, very easy)

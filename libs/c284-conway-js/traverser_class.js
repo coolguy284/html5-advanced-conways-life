@@ -1,4 +1,5 @@
 let _module__c284_conway_js__traverser_class = (() => {
+  let { CONSTANTS } = _module__c284_conway_js__constants;
   let {
     convertDirectionCoordPairToWord,
     directionWordIsHorizontal,
@@ -124,7 +125,7 @@ let _module__c284_conway_js__traverser_class = (() => {
                   // and current y is within simulation object's bounds
                   if (this.y > shiftedStartingY && this.y < shiftedEndingY) {
                     // and simulation object direction, simulation object facing, and direction of traversal line up
-                    if (COLLISION_MATRIX_HORIZONTAL[(simObject.direction == 'up') * 4 + (simObject.facing == 'right') * 2 + (x > 0)]) {
+                    if (CONSTANTS.COLLISION_MATRIX_HORIZONTAL[(simObject.direction == 'up') * 4 + (simObject.facing == 'right') * 2 + (x > 0)]) {
                       // then there was a collision
                       let positionAlongObject = simObject.startingY - this.y - 1;
                       
@@ -153,7 +154,7 @@ let _module__c284_conway_js__traverser_class = (() => {
                   // and current x is within simulation object's bounds
                   if (this.x > shiftedStartingX && this.x < shiftedEndingX) {
                     // and simulation object direction, simulation object facing, and direction of traversal line up
-                    if (COLLISION_MATRIX_VERTICAL[(simObject.direction == 'right') * 4 + (simObject.facing == 'right') * 2 + (y > 0)]) {
+                    if (CONSTANTS.COLLISION_MATRIX_VERTICAL[(simObject.direction == 'right') * 4 + (simObject.facing == 'right') * 2 + (y > 0)]) {
                       // then there was a collision
                       let positionAlongObject = simObject.startingX - this.x - 1;
                       

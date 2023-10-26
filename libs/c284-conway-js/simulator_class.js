@@ -1,4 +1,5 @@
 let _module__c284_conway_js__simulator_class = (() => {
+  let { CONSTANTS } = _module__c284_conway_js__constants;
   let { calculateBaseTFromStartAndEndT } = _module__c284_conway_js__helper_funcs;
   
   class ConwaySimulator {
@@ -181,7 +182,7 @@ let _module__c284_conway_js__simulator_class = (() => {
       
       // lock times earlier than threshold (this has no effect for now becuase things cannot influence past)
       
-      this.boardState.setLockedTimeIfGreater(t - CONWAYS_LOCK_IN_IDLE_TIME);
+      this.boardState.setLockedTimeIfGreater(t - CONSTANTS.CONWAYS_LOCK_IN_IDLE_TIME);
     }
     
     resetSimulation() {
