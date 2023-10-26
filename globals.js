@@ -56,10 +56,10 @@ let makeArrayReadingFunc = (array, startingX, startingY) => {
   }
 };
 
-conwaySim.setSimulationArea(-50, -50, 50, 50);
-
 switch (simMode) {
   case 1:
+    conwaySim.setSimulationArea(-50, -50, 50, 50);
+    
     conwaySim.setDefaultState((x, y, t) => {
       if (t == 0 && x == 0 && y == 0) {
         return true;
@@ -70,18 +70,26 @@ switch (simMode) {
     break;
   
   case 2:
+    conwaySim.setSimulationArea(-50, -50, 50, 50);
+    
     conwaySim.setDefaultState(makeArrayReadingFunc(smallStableThing, 0, 0));
     break;
   
   case 3:
+    conwaySim.setSimulationArea(-50, -50, 50, 50);
+    
     conwaySim.setDefaultState(makeArrayReadingFunc(glider, -1, -1));
     break;
   
   case 4:
+    conwaySim.setSimulationArea(-50, -50, 50, 50);
+    
     conwaySim.setDefaultState(makeArrayReadingFunc(gosperGliderGun, -17, -2));
     break;
   
   case 5:
+    conwaySim.setSimulationArea(-20, -30, 24, 10);
+    
     conwaySim.setDefaultState(makeArrayReadingFunc(gosperGliderGun, -17, -2));
     
     conwaySim.addBasicBoundary(
@@ -91,6 +99,8 @@ switch (simMode) {
     break;
   
   case 6:
+    conwaySim.setSimulationArea(-50, -50, 50, 50);
+    
     conwaySim.setDefaultState(makeArrayReadingFunc(gosperGliderGun, -17, -2));
     
     conwaySim.addBasicBoundary(
@@ -108,6 +118,8 @@ switch (simMode) {
     break;
   
   case 7:
+    conwaySim.setSimulationArea(-50, -50, 50, 50);
+    
     conwaySim.setDefaultState((x, y, t) => {
       if (y == -51) {
         return true;
