@@ -186,8 +186,11 @@ class ConwaySimulator {
   // adds a basic double sided boundary
   addBasicBoundary(
     startingX, startingY, direction, length,
-    startingT, endingT
+    startingT, endingT,
+    boundaryValue
   ) {
+    if (boundaryValue == null) boundaryValue = false;
+    
     this.simulationObjects.push({
       type: 'boundary',
       startingX,
@@ -198,7 +201,7 @@ class ConwaySimulator {
       startingT,
       endingT,
       baseT: calculateBaseTFromStartAndEndT(startingT, endingT),
-      behaviorFunc: (x, t) => false,
+      behaviorFunc: (x, t) => boundaryValue,
     });
     
     this.simulationObjects.push({
@@ -211,7 +214,7 @@ class ConwaySimulator {
       startingT,
       endingT,
       baseT: calculateBaseTFromStartAndEndT(startingT, endingT),
-      behaviorFunc: (x, t) => false,
+      behaviorFunc: (x, t) => boundaryValue,
     });
   }
   

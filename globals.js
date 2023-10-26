@@ -99,12 +99,24 @@ switch (simMode) {
     break;
   
   case 6:
-    conwaySim.setSimulationArea(-50, -50, 50, 50);
+    conwaySim.setSimulationArea(-20, -30, 24, 10);
     
     conwaySim.setDefaultState(makeArrayReadingFunc(gosperGliderGun, -17, -2));
     
     conwaySim.addBasicBoundary(
-      -10, -40, 'right', 59,
+      20, -5, 'down', 20,
+      0, Infinity,
+      true
+    );
+    break;
+  
+  case 7:
+    conwaySim.setSimulationArea(-20, -40, 24, 10);
+    
+    conwaySim.setDefaultState(makeArrayReadingFunc(gosperGliderGun, -17, -2));
+    
+    conwaySim.addBasicBoundary(
+      -10, -36, 'right', 31,
       0, Infinity
     );
     
@@ -117,7 +129,7 @@ switch (simMode) {
     );
     break;
   
-  case 7:
+  case 8:
     conwaySim.setSimulationArea(-50, -50, 50, 50);
     
     conwaySim.setDefaultState((x, y, t) => {

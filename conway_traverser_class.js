@@ -186,7 +186,7 @@ class BoardTraverser {
       
       let collisionInfo = this.checkIfMovementDeltaIntersectsAnObject(x, y);
       
-      if (collisionInfo != null) {
+      if (collisionInfo != null && collisionInfo.object.type == 'boundary') {
         // perform traversal behavior through object if object
         
         switch (collisionInfo.object.type) {
