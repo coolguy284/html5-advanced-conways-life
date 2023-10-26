@@ -455,6 +455,31 @@ function getShiftedCoordsBasedOnSide(x, y, direction, facing, coordShiftAmt) {
   }
 }
 
+function convertWordDirectionToCoordPair(directionWord) {
+  switch (directionWord) {
+    case 'up': return [0, 1];
+    case 'down': return [0, -1];
+    case 'left': return [-1, 0];
+    case 'right': return [1, 0];
+    default: throw new Error(`Invalid direction ${direction}`);
+  }
+}
+
+function convertDirectionCoordPairToWord(directionCoordPair) {
+  let x = directionCoordPair[0], y = directionCoordPair[1];
+  
+  if (x > 0) return 'right';
+  if (x < 0) return 'left';
+  if (y > 0) return 'up';
+  if (y < 0) return 'down';
+  
+  throw new Error(`Invalid coord pair ${x}, ${y}`);
+}
+
+function directionWordIsHorizontal(directionWord) {
+  return directionWord == 'left' || directionWord == 'right';
+}
+
 // simple object to move around on the board of a conwaysim object
 // this object is designed to be immutable, movement methods return a new traverser object
 class BoardTraverser {
@@ -468,11 +493,23 @@ class BoardTraverser {
   selfY_trueXScale = 0;
   selfY_trueYScale = 1;
   
+  insideBoundary = false;
+  boundaryObject;
+  boundaryDisengageDirection;
+  boundaryMovementDirection;
+  boundaryRelPos;
+  boundaryRelTime;
+  
   constructor(
     conwaySim,
     x, y, t,
     selfX_trueXScale, selfX_trueYScale,
-    selfY_trueXScale, selfY_trueYScale) {
+    selfY_trueXScale, selfY_trueYScale,
+    insideBoundary,
+    boundaryObject,
+    boundaryDisengageDirection, boundaryMovementDirection,
+    boundaryRelPos, boundaryRelTime
+  ) {
     this.conwaySim = conwaySim;
     this.x = x;
     this.y = y;
@@ -483,15 +520,48 @@ class BoardTraverser {
       this.selfX_trueYScale = selfX_trueYScale;
       this.selfY_trueXScale = selfY_trueXScale;
       this.selfY_trueYScale = selfY_trueYScale;
+      
+      this.insideBoundary = insideBoundary;
+      this.boundaryObject = boundaryObject;
+      this.boundaryDisengageDirection = boundaryDisengageDirection;
+      this.boundaryMovementDirection = boundaryMovementDirection;
+      this.boundaryRelPos = boundaryRelPos;
+      this.boundaryRelTime = boundaryRelTime;
     }
   }
   
-  getPosition() {
-    return { x: this.x, y: this.y, t: this.t };
+  getStateAt() {
+    if (this.insideBoundary) {
+      return this.boundaryObject.behaviorFunc(this.boundaryRelPos, this.boundaryRelTime);
+    } else {
+      return this.conwaySim.getStateAt(this.x, this.y, this.t);
+    }
   }
   
-  getStateAt() {
-    return this.conwaySim.getStateAt(this.x, this.y, this.t);
+  clone() {
+    return new BoardTraverser(
+      this.conwaySim,
+      this.x, this.y, this.t,
+      this.selfX_trueXScale, this.selfX_trueYScale,
+      this.selfY_trueXScale, this.selfY_trueYScale,
+      this.insideBoundary,
+      this.boundaryObject,
+      this.boundaryDisengageDirection, this.boundaryMovementDirection,
+      this.boundaryRelPos, this.boundaryRelTime
+    );
+  }
+  
+  // returns new object with the given parameters replaced
+  replaceParameters(parametersObject) {
+    if (Object.keys(parametersObject).length == 0) {
+      return this;
+    } else {
+      let newObject = this.clone();
+      
+      for (let parameter in parametersObject) {
+        newObject[parameter] = parametersObject[parameter];
+      }
+    }
   }
   
   // returns an object with intersection info if true, or null if not
@@ -589,12 +659,80 @@ class BoardTraverser {
   // underlying movement and transformation functions
   
   trueMoveBy(x, y) {
-    return new BoardTraverser(
-      this.conwaySim,
-      this.x + x, this.y + y, this.t,
-      this.selfX_trueXScale, this.selfX_trueYScale,
-      this.selfY_trueXScale, this.selfY_trueYScale
-    );
+    let movementDirectionWord = convertDirectionCoordPairToWord([x, y]);
+    
+    if (!this.insideBoundary || movementDirectionWord == this.boundaryDisengageDirection) {
+      // normal movement logic if outside boundary or leaving boundary
+      
+      let collisionInfo = this.checkIfMovementDeltaIntersectsAnObject(x, y);
+      
+      if (collisionInfo != null) {
+        // perform traversal behavior through object if object
+        
+        switch (collisionInfo.object.type) {
+          case 'boundary':
+            // boundary traversal behavior
+            
+            return this.replaceParameters({
+              insideBoundary: true,
+              boundaryObject: collisionInfo.object,
+              boundaryDisengageDirection: convertDirectionCoordPairToWord([-x, -y]),
+              boundaryMovementDirection: collisionInfo.object.direction,
+              boundaryRelPos: collisionInfo.positionAlongObject,
+              boundaryRelTime: collisionInfo.timeRelToObject,
+            });
+        }
+      } else {
+        // standard movement if no object, clearing boundary information if there is any
+        
+        return this.replaceParameters({
+          insideBoundary: false,
+          boundaryObject: null,
+          boundaryDisengageDirection: null,
+          boundaryMovementDirection: null,
+          boundaryRelPos: null,
+          boundaryRelTime: null,
+          x: this.x + x,
+          y: this.y + y,
+        });
+      }
+    } else {
+      // only register movement along boundary if inside boundary
+      
+      if (directionWordIsHorizontal(this.boundaryMovementDirection)) {
+        if (directionWordIsHorizontal(movementDirectionWord)) {
+          if (this.boundaryMovementDirection == movementDirectionWord) {
+            return this.replaceParameters({
+              x: this.x + x,
+              boundaryRelPos: this.boundaryRelPos + 1,
+            });
+          } else {
+            return this.replaceParameters({
+              x: this.x + x,
+              boundaryRelPos: this.boundaryRelPos - 1,
+            });
+          }
+        } else {
+          // do nothing
+        }
+      } else {
+        if (directionWordIsHorizontal(movementDirectionWord)) {
+          // do nothing
+        } else {
+          if (this.boundaryMovementDirection == movementDirectionWord) {
+            return this.replaceParameters({
+              y: this.y + y,
+              boundaryRelPos: this.boundaryRelPos + 1,
+            });
+          } else {
+            return this.replaceParameters({
+              y: this.y + y,
+              boundaryRelPos: this.boundaryRelPos - 1,
+            });
+          }
+        }
+      }
+    }
   }
   
   rotate(multipleOf90CCW) {
@@ -603,47 +741,47 @@ class BoardTraverser {
         return this;
       
       case 1:
-        return new BoardTraverser(
-          this.conwaySim,
-          this.x, this.y, this.t,
-          -this.selfX_trueYScale, this.selfX_trueXScale,
-          -this.selfY_trueYScale, this.selfY_trueXScale
-        );
+        return this.replaceParameters({
+          selfX_trueXScale: -this.selfX_trueYScale,
+          selfX_trueYScale: this.selfX_trueXScale,
+          selfY_trueXScale: -this.selfY_trueYScale,
+          selfY_trueYScale: this.selfY_trueXScale,
+        });
       
       case 2:
-        return new BoardTraverser(
-          this.conwaySim,
-          this.x, this.y, this.t,
-          -this.selfX_trueXScale, -this.selfX_trueYScale,
-          -this.selfY_trueXScale, -this.selfY_trueYScale
-        );
+        return this.replaceParameters({
+          selfX_trueXScale: -this.selfX_trueXScale,
+          selfX_trueYScale: -this.selfX_trueYScale,
+          selfY_trueXScale: -this.selfY_trueXScale,
+          selfY_trueYScale: -this.selfY_trueYScale,
+        });
       
       case 3:
-        return new BoardTraverser(
-          this.conwaySim,
-          this.x, this.y, this.t,
-          this.selfX_trueYScale, -this.selfX_trueXScale,
-          this.selfY_trueYScale, -this.selfY_trueXScale
-        );
+        return this.replaceParameters({
+          selfX_trueXScale: this.selfX_trueYScale,
+          selfX_trueYScale: -this.selfX_trueXScale,
+          selfY_trueXScale: this.selfY_trueYScale,
+          selfY_trueYScale: -this.selfY_trueXScale,
+        });
     }
   }
   
   flipX() {
-    return new BoardTraverser(
-      this.conwaySim,
-      this.x, this.y, this.t,
-      -this.selfX_trueXScale, this.selfX_trueYScale,
-      -this.selfY_trueXScale, this.selfY_trueYScale
-    );
+    return this.replaceParameters({
+      selfX_trueXScale: -this.selfX_trueXScale,
+      selfX_trueYScale: this.selfX_trueYScale,
+      selfY_trueXScale: -this.selfY_trueXScale,
+      selfY_trueYScale: this.selfY_trueYScale,
+    });
   }
   
   flipY() {
-    return new BoardTraverser(
-      this.conwaySim,
-      this.x, this.y, this.t,
-      this.selfX_trueXScale, -this.selfX_trueYScale,
-      this.selfY_trueXScale, -this.selfY_trueYScale
-    );
+    return this.replaceParameters({
+      selfX_trueXScale: this.selfX_trueXScale,
+      selfX_trueYScale: -this.selfX_trueYScale,
+      selfY_trueXScale: this.selfY_trueXScale,
+      selfY_trueYScale: -this.selfY_trueYScale,
+    });
   }
   
   // helper functions
