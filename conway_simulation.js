@@ -9,6 +9,11 @@ function getWorldSpaceCorner(x, y, corner) {
   }
 }
 
+// simple calculation of baseT from start and end T values
+function calculateBaseTFromStartAndEndT(startT, endT) {
+  return Number.isFinite(startT) ? startT : Number.isFinite(endT) ? endT : 0;
+}
+
 // class for the state of the conway board
 // default state func accepts (x, y, t) and returns true or false for state
 // this object only stores changes to the default state
@@ -137,6 +142,7 @@ class ConwaySimulator {
       reversed: false, // makes the boundary's function get called in reverse order
       startingT: 0,
       endingT: 100,
+      baseT: 0, // generally set to startingT, and it is the base time value for the boundary. useful if starting t is negative infinity
       behaviorFunc: (x, t) => {
         // t is zero at global startingT, x is zero at first position on the boundary, and goes up by 1 for each cell along boundary
         // function returns true if boundary should behave like live cell at that point, false for dead cell
@@ -154,6 +160,7 @@ class ConwaySimulator {
       reversed: false,
       startingT: 0,
       endingT: 100,
+      baseT: 0,
       links: [
         { id: 2, strength: 1, temporalShift: 0 },
         // strength means objects seen through the portal will have a positive number for strength value, as though many neighbors are live
@@ -170,6 +177,7 @@ class ConwaySimulator {
       reversed: false,
       startingT: 0,
       endingT: 100,
+      baseT: 0,
       links: [
         { id: 1, strength: 1, temporalShift: 0 },
       ],
@@ -231,11 +239,15 @@ class ConwaySimulator {
     return liveNeighbors;
   }
   
+  getBoardTraverser(x, y, t) {
+    return new BoardTraverser(this, x, y, t);
+  }
+  
   getCellLiveNeighborsAdvanced(x, y, t) {
     let liveNeighbors = 0;
     
     // initalize board traverser
-    let traverser = new BoardTraverser(this, x, y, t);
+    let traverser = this.getBoardTraverser(this, x, y, t);
     
     // 4 cartesian directions are straightforward
     liveNeighbors += traverser.moveLeft().getStateAt();
@@ -310,6 +322,7 @@ class ConwaySimulator {
       facing: 'left',
       startingT,
       endingT,
+      baseT: calculateBaseTFromStartAndEndT(startingT, endingT),
       behaviorFunc: (x, t) => false,
     });
     
@@ -322,6 +335,7 @@ class ConwaySimulator {
       facing: 'right',
       startingT,
       endingT,
+      baseT: calculateBaseTFromStartAndEndT(startingT, endingT),
       behaviorFunc: (x, t) => false,
     });
   }
@@ -331,7 +345,7 @@ class ConwaySimulator {
     firstStartingX, firstStartingY, firstDirection, firstFacing, firstReversed,
     secondStartingX, secondStartingY, secondDirection, secondFacing, secondReversed,
     length,
-    firstStaringT, firstEndingT,
+    firstStartingT, firstEndingT,
     temporalShift // shift is how far the second portal is "in the future" compared to the first
   ) {
     this.simulationObjects.push({
@@ -342,8 +356,9 @@ class ConwaySimulator {
       length,
       facing: firstFacing,
       reversed: firstReversed,
-      startingT: firstStaringT,
+      startingT: firstStartingT,
       endingT: firstEndingT,
+      baseT: calculateBaseTFromStartAndEndT(firstStartingT, firstEndingT),
       links: [
         {
           id: this.simulationObjects.length + 2,
@@ -360,12 +375,13 @@ class ConwaySimulator {
       direction: firstDirection,
       length,
       facing: firstFacing == 'left' ? 'right' : 'left',
-      startingT: firstStaringT,
+      startingT: firstStartingT,
       endingT: firstEndingT,
+      baseT: calculateBaseTFromStartAndEndT(firstStartingT, firstEndingT),
       behaviorFunc: (x, t) => false,
     });
     
-    let secondStartingT = firstStaringT + temporalShift;
+    let secondStartingT = firstStartingT + temporalShift;
     let secondEndingT = firstEndingT + temporalShift;
     
     this.simulationObjects.push({
@@ -378,6 +394,7 @@ class ConwaySimulator {
       reversed: secondReversed,
       startingT: secondStartingT,
       endingT: secondEndingT,
+      baseT: calculateBaseTFromStartAndEndT(secondStartingT, secondEndingT),
       links: [
         {
           id: this.simulationObjects.length - 2,
@@ -396,6 +413,7 @@ class ConwaySimulator {
       facing: secondFacing == 'left' ? 'right' : 'left',
       startingT: secondStartingT,
       endingT: secondEndingT,
+      baseT: calculateBaseTFromStartAndEndT(secondStartingT, secondEndingT),
       behaviorFunc: (x, t) => false,
     });
   }
@@ -476,6 +494,96 @@ class BoardTraverser {
     return this.conwaySim.getStateAt(this.x, this.y, this.t);
   }
   
+  // returns an object with intersection info if true, or null if not
+  checkIfMovementDeltaIntersectsAnObject(x, y) {
+    let movementIsHorizontal = x != 0;
+    
+    // for every simulation object
+    for (let simObject of this.conwaySim.simulationObjects) {
+      switch (simObject.type) {
+        case 'boundary':
+        case 'portal':
+          // if its of the right type
+          
+          let [ shiftedStartingX, shiftedStartingY ] = getWorldSpaceCorner(simObject.startingX, simObject.startingY, 'bottom left');
+          let [ shiftedEndingX, shiftedEndingY ] = getWorldSpaceCorner(
+            ...getEndingCoords(simObject.startingX, simObject.startingY, simObject.direction, simObject.length),
+            'bottom left'
+          );
+          
+          // swap shifted values if they are in reverse order
+          if (shiftedEndingX < shiftedStartingX) {
+            [ shiftedStartingX, shiftedEndingX ] = [shiftedEndingX, shiftedStartingX];
+          }
+          if (shiftedEndingY < shiftedStartingY) {
+            [ shiftedStartingY, shiftedEndingY ] = [shiftedEndingY, shiftedStartingY];
+          }
+          
+          // if movement is horizontal
+          if (movementIsHorizontal) {
+            // and simulation object is perpendicular (vertical)
+            if (simObject.direction == 'up' || simObject.direction == 'down') {
+              // and simulation object is one step in front of object
+              if (x > 0 && this.x + 0.5 == shiftedStartingX || x < 0 && this.x - 0.5 == shiftedStartingX) {
+                // and current y is within simulation object's bounds
+                if (this.y > shiftedStartingY && this.y < shiftedEndingY) {
+                  // and simulation object direction, simulation object facing, and direction of traversal line up
+                  if (COLLISION_MATRIX_HORIZONTAL[(simObject.direction == 'up') * 4 + (simObject.facing == 'right') * 2 + (x > 0)]) {
+                    // then there was a collision
+                    let positionAlongObject = simObject.startingY - this.y - 1;
+                    
+                    if (simObject.reversed) {
+                      positionAlongObject = simObject.length - positionAlongObject - 1;
+                    }
+                    
+                    let timeRelToObject = this.t - simObject.baseT;
+                    
+                    return {
+                      object: simObject,
+                      positionAlongObject,
+                      timeRelToObject,
+                    };
+                  }
+                }
+              }
+            }
+          } else {
+            // or if movement is vertical
+            
+            // and simulation object is perpendicular (horizontal)
+            if (simObject.direction == 'left' || simObject.direction == 'right') {
+              // and simulation object is one step in front of object
+              if (y > 0 && this.y + 0.5 == shiftedStartingY || y < 0 && this.y - 0.5 == shiftedStartingY) {
+                // and current x is within simulation object's bounds
+                if (this.x > shiftedStartingX && this.x < shiftedEndingX) {
+                  // and simulation object direction, simulation object facing, and direction of traversal line up
+                  if (COLLISION_MATRIX_VERTICAL[(simObject.direction == 'right') * 4 + (simObject.facing == 'right') * 2 + (y > 0)]) {
+                    // then there was a collision
+                    let positionAlongObject = simObject.startingX - this.x - 1;
+                    
+                    if (simObject.reversed) {
+                      positionAlongObject = simObject.length - positionAlongObject - 1;
+                    }
+                    
+                    let timeRelToObject = this.t - simObject.baseT;
+                    
+                    return {
+                      object: simObject,
+                      positionAlongObject,
+                      timeRelToObject,
+                    };
+                  }
+                }
+              }
+            }
+          }
+      }
+    }
+          
+    // otherwise there was no collision
+    return null;
+  }
+  
   // these functions are only intended to move in a single cartesian direction by 1
   
   // underlying movement and transformation functions
@@ -545,61 +653,6 @@ class BoardTraverser {
       this.selfX_trueXScale * x + this.selfY_trueXScale * y,
       this.selfX_trueYScale * x + this.selfY_trueYScale * y,
     ];
-  }
-  
-  // returns an object with intersection info if true, or null if not
-  checkIfMovementDeltaIntersectsAnObject(x, y) {
-    let movementIsHorizontal = x != 0;
-    
-    for (let simObject of this.conwaySim.simulationObjects) {
-      switch (simObject.type) {
-        case 'boundary':
-        case 'portal':
-          let [ shiftedStartingX, shiftedStartingY ] = getWorldSpaceCorner(startingX, startingY, 'bottom left');
-          let [ shiftedEndingX, shiftedEndingY ] = getWorldSpaceCorner(
-            ...getEndingCoords(startingX, startingY, direction, length),
-            'bottom left'
-          );
-          
-          if (movementIsHorizontal) {
-            let possibleCollision;
-            
-            if (simObject.direction == 'down' && simObject.facing == 'right' && x > 0) {
-              possibleCollision = true;
-            } else if (simObject.direction == 'up' && simObject.facing == 'left' && x > 0) {
-              possibleCollision = true;
-            } else if (simObject.direction == 'down' && simObject.facing == 'left' && x < 0) {
-              possibleCollision = true;
-            } else if (simObject.direction == 'up' && simObject.facing == 'right' && x < 0) {
-              possibleCollision = true;
-            } else {
-              possibleCollision = false;
-            }
-            
-            // inside if statements are for collision found
-            if (possibleCollision) {
-              if (simObject.direction == 'down' && shiftedStartingY > this.y && shiftedEndingY < this.y && (x > 0 && simObject.facing == 'right' || x < 0 && simObject.facing == 'left')) {
-                let collsionYRelative = shiftedStartingY - this.y - 0.5;
-                
-                if (simObject.reversed) {
-                  collsionYRelative = simObject.length - collsionYRelative - 1;
-                }
-                
-                return {
-                  object: simObject,
-                  positionAlongObject: collsionYRelative,
-                };
-                // TODO - complete rest of cases below, then do same for vertical direction
-              } else {
-                return null;
-              }
-            } else {
-              return null;
-            }
-          }
-          break;
-      }
-    }
   }
   
   // relative movement functions

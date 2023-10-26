@@ -10,7 +10,7 @@ let previousTimeAfterRender;
 
 let conwaySim = new ConwaySimulator();
 
-let simMode = 7;
+let simMode = 5;
 
 // https://en.wikipedia.org/wiki/Conway's_Game_of_Life
 let smallStableThing = [
