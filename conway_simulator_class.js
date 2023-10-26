@@ -187,6 +187,10 @@ class ConwaySimulator {
     this.currentT = 0;
   }
   
+  resetSimulationObjects() {
+    this.simulationObjects = [];
+  }
+  
   // adds a basic double sided boundary
   addBasicBoundary(
     startingX, startingY, direction, length,

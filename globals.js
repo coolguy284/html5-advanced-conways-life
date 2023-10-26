@@ -10,7 +10,7 @@ let previousTimeAfterRender;
 
 let conwaySim = new ConwaySimulator();
 
-let simMode = 9;
+let simMode = 10;
 let stateSetMode = 'manual setting'; // either 'default function' or 'manual setting'
 
 // https://en.wikipedia.org/wiki/Conway's_Game_of_Life
@@ -57,7 +57,7 @@ let makeArrayReadingFunc = (stateArray, startingX, startingY) => {
   }
 };
 
-let setInitialState = (conwaySim, stateArray, startingX, startingY) => {
+let setInitialStateToArray = (conwaySim, stateArray, startingX, startingY) => {
   switch (stateSetMode) {
     case 'default function':
       conwaySim.setDefaultState(makeArrayReadingFunc(stateArray, startingX, startingY));
@@ -78,114 +78,172 @@ let setInitialState = (conwaySim, stateArray, startingX, startingY) => {
   }
 };
 
-switch (simMode) {
-  case 1:
-    // single dot
-    conwaySim.setSimulationArea(-50, -50, 50, 50);
+function setInitialState() {
+  switch (simMode) {
+    case 1:
+      // single dot
+      conwaySim.setSimulationArea(-50, -50, 50, 50);
+      
+      setInitialStateToArray(conwaySim, [[1]], 0, 0);
+      break;
     
-    setInitialState(conwaySim, [[1]], 0, 0);
-    break;
+    case 2:
+      // 4 cell stable configuration
+      conwaySim.setSimulationArea(-50, -50, 50, 50);
+      
+      setInitialStateToArray(conwaySim, smallStableThing, 0, 0);
+      break;
+    
+    case 3:
+      // single glider
+      conwaySim.setSimulationArea(-50, -50, 50, 50);
+      
+      setInitialStateToArray(conwaySim, glider, -1, -1);
+      break;
+    
+    case 4:
+      // gosper glider gun
+      conwaySim.setSimulationArea(-50, -50, 50, 50);
+      
+      setInitialStateToArray(conwaySim, gosperGliderGun, -17, -2);
+      break;
+    
+    case 5:
+      // gosper glider gun with always live unsimulated cells below
+      conwaySim.setSimulationArea(-50, -50, 50, 50);
+      
+      conwaySim.setDefaultState((x, y, t) => {
+        if (y == -51) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+      break;
+    
+    case 6:
+      // gosper glider gun with boundary
+      conwaySim.setSimulationArea(-20, -30, 24, 10);
+      
+      setInitialStateToArray(conwaySim, gosperGliderGun, -17, -2)
+      break;
+    
+    case 7:
+      // gosper glider gun with hot boundary
+      conwaySim.setSimulationArea(-20, -30, 24, 10);
+      
+      setInitialStateToArray(conwaySim, gosperGliderGun, -17, -2);
+      break;
+    
+    case 8:
+      // gosper glider gun with boundary facing towards it
+      conwaySim.setSimulationArea(-20, -30, 24, 10);
+      
+      setInitialStateToArray(conwaySim, gosperGliderGun, -17, -2);
+      break;
+    
+    case 9:
+      // gosper glider gun with boundary facing away from it
+      conwaySim.setSimulationArea(-20, -30, 24, 10);
+      
+      setInitialStateToArray(conwaySim, gosperGliderGun, -17, -2);
+      break;
+    
+    case 10:
+      // gosper glider gun with portals and boundary
+      conwaySim.setSimulationArea(-20, -40, 24, 10);
+      
+      setInitialStateToArray(conwaySim, gosperGliderGun, -17, -2);
+      break;
+    
+    case 11:
+      // lwss
+      conwaySim.setSimulationArea(-50, -50, 50, 50);
+      
+      setInitialStateToArray(conwaySim, lwss, 0, -2);
+      break;
+    
+    case 12:
+      // lwss with portals
+      conwaySim.setSimulationArea(-20, -10, 20, 10);
+      
+      setInitialStateToArray(conwaySim, lwss, 0, -2);
+      break;
+  }
+}
+
+function setInitialStateObjects() {
+  conwaySim.resetSimulationObjects();
   
-  case 2:
-    // 4 cell stable configuration
-    conwaySim.setSimulationArea(-50, -50, 50, 50);
+  switch (simMode) {
+    case 6:
+      // gosper glider gun with boundary
+      conwaySim.addBasicBoundary(
+        20, -5, 'down', 20,
+        0, Infinity
+      );
+      break;
     
-    setInitialState(conwaySim, smallStableThing, 0, 0);
-    break;
-  
-  case 3:
-    // single glider
-    conwaySim.setSimulationArea(-50, -50, 50, 50);
+    case 7:
+      // gosper glider gun with hot boundary
+      conwaySim.addBasicBoundary(
+        20, -5, 'down', 20,
+        0, Infinity,
+        true
+      );
+      break;
     
-    setInitialState(conwaySim, glider, -1, -1);
-    break;
-  
-  case 4:
-    // gosper glider gun
-    conwaySim.setSimulationArea(-50, -50, 50, 50);
+    case 8:
+      // gosper glider gun with boundary facing towards it
+      conwaySim.addSingleSidedBoundary(
+        20, -5, 'down', 20, 'right',
+        0, Infinity
+      );
+      break;
     
-    setInitialState(conwaySim, gosperGliderGun, -17, -2);
-    break;
-  
-  case 5:
-    // gosper glider gun with always live unsimulated cells below
-    conwaySim.setSimulationArea(-50, -50, 50, 50);
+    case 9:
+      // gosper glider gun with boundary facing away from it
+      conwaySim.addSingleSidedBoundary(
+        20, -5, 'down', 20, 'left',
+        0, Infinity
+      );
+      break;
     
-    conwaySim.setDefaultState((x, y, t) => {
-      if (y == -51) {
-        return true;
-      } else {
-        return false;
-      }
-    });
-    break;
-  
-  case 6:
-    // gosper glider gun with boundary
-    conwaySim.setSimulationArea(-20, -30, 24, 10);
+    case 10:
+      // gosper glider gun with portals and boundary
+      conwaySim.addBasicBoundary(
+        -10, -36, 'right', 31,
+        0, Infinity
+      );
+      
+      conwaySim.addPortalPairWithBackBoundaries(
+        15, -5, 'down', 'right', false,
+        -15, -5, 'down', 'left', true,
+        21,
+        0, Infinity,
+        0
+      );
+      break;
     
-    setInitialState(conwaySim, gosperGliderGun, -17, -2);
-    
-    conwaySim.addBasicBoundary(
-      20, -5, 'down', 20,
-      0, Infinity
-    );
-    break;
-  
-  case 7:
-    // gosper glider gun with hot boundary
-    conwaySim.setSimulationArea(-20, -30, 24, 10);
-    
-    setInitialState(conwaySim, gosperGliderGun, -17, -2);
-    
-    conwaySim.addBasicBoundary(
-      20, -5, 'down', 20,
-      0, Infinity,
-      true
-    );
-    break;
-  
-  case 8:
-    // gosper glider gun with boundary facing towards it
-    conwaySim.setSimulationArea(-20, -30, 24, 10);
-    
-    setInitialState(conwaySim, gosperGliderGun, -17, -2);
-    
-    conwaySim.addSingleSidedBoundary(
-      20, -5, 'down', 20, 'right',
-      0, Infinity
-    );
-    break;
-  
-  case 9:
-    // gosper glider gun with boundary facing away from it
-    conwaySim.setSimulationArea(-20, -30, 24, 10);
-    
-    setInitialState(conwaySim, gosperGliderGun, -17, -2);
-    
-    conwaySim.addSingleSidedBoundary(
-      20, -5, 'down', 20, 'left',
-      0, Infinity
-    );
-    break;
-  
-  case 10:
-    // gosper glider gun with portals and boundary
-    conwaySim.setSimulationArea(-20, -40, 24, 10);
-    
-    setInitialState(conwaySim, gosperGliderGun, -17, -2);
-    
-    conwaySim.addBasicBoundary(
-      -10, -36, 'right', 31,
-      0, Infinity
-    );
-    
-    conwaySim.addPortalPairWithBackBoundaries(
-      15, -5, 'down', 'right', false,
-      -15, -5, 'down', 'left', true,
-      21,
-      0, Infinity,
-      0
-    );
-    break;
+    case 12:
+      // lwss with portals
+      
+      conwaySim.addPortalPairWithBackBoundaries(
+        16, 6, 'down', 'right', false,
+        -15, 6, 'down', 'left', true,
+        11,
+        0, Infinity,
+        0
+      );
+      break;
+  }
+}
+
+setInitialState();
+setInitialStateObjects();
+
+function setInitialStateToArrayIfNeededOnReset() {
+  if (stateSetMode == 'manual setting') {
+    setInitialState();
+  }
 }

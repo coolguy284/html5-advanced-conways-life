@@ -55,6 +55,7 @@ addEventListener('keydown', evt => {
     
     case 'r':
       conwaySim.resetSimulation();
+      setInitialStateToArrayIfNeededOnReset();
       renderFrame();
       break;
     
