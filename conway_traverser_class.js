@@ -79,6 +79,8 @@ class BoardTraverser {
       for (let parameter in parametersObject) {
         newObject[parameter] = parametersObject[parameter];
       }
+      
+      return newObject;
     }
   }
   
