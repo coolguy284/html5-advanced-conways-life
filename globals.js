@@ -10,7 +10,7 @@ let previousTimeAfterRender;
 
 let conwaySim = new ConwaySimulator();
 
-let simMode = 6;
+let simMode = 9;
 let stateSetMode = 'manual setting'; // either 'default function' or 'manual setting'
 
 // https://en.wikipedia.org/wiki/Conway's_Game_of_Life
@@ -121,7 +121,7 @@ switch (simMode) {
     break;
   
   case 6:
-    // gosper glider gun with boundery
+    // gosper glider gun with boundary
     conwaySim.setSimulationArea(-20, -30, 24, 10);
     
     setInitialState(conwaySim, gosperGliderGun, -17, -2);
@@ -146,6 +146,30 @@ switch (simMode) {
     break;
   
   case 8:
+    // gosper glider gun with boundary facing towards it
+    conwaySim.setSimulationArea(-20, -30, 24, 10);
+    
+    setInitialState(conwaySim, gosperGliderGun, -17, -2);
+    
+    conwaySim.addSingleSidedBoundary(
+      20, -5, 'down', 20, 'right',
+      0, Infinity
+    );
+    break;
+  
+  case 9:
+    // gosper glider gun with boundary facing away from it
+    conwaySim.setSimulationArea(-20, -30, 24, 10);
+    
+    setInitialState(conwaySim, gosperGliderGun, -17, -2);
+    
+    conwaySim.addSingleSidedBoundary(
+      20, -5, 'down', 20, 'left',
+      0, Infinity
+    );
+    break;
+  
+  case 10:
     // gosper glider gun with portals and boundary
     conwaySim.setSimulationArea(-20, -40, 24, 10);
     

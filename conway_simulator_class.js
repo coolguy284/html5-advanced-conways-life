@@ -222,6 +222,28 @@ class ConwaySimulator {
     });
   }
   
+  // adds a single sided boundary
+  addSingleSidedBoundary(
+    startingX, startingY, direction, length, facing,
+    startingT, endingT,
+    boundaryValue
+  ) {
+    if (boundaryValue == null) boundaryValue = false;
+    
+    this.simulationObjects.push({
+      type: 'boundary',
+      startingX,
+      startingY,
+      direction,
+      length,
+      facing,
+      startingT,
+      endingT,
+      baseT: calculateBaseTFromStartAndEndT(startingT, endingT),
+      behaviorFunc: (x, t) => boundaryValue,
+    });
+  }
+  
   // adds a portal pair, with boundaries on the back
   addPortalPairWithBackBoundaries(
     firstStartingX, firstStartingY, firstDirection, firstFacing, firstReversed,
