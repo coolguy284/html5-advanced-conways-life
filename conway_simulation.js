@@ -247,7 +247,7 @@ class ConwaySimulator {
     let liveNeighbors = 0;
     
     // initalize board traverser
-    let traverser = this.getBoardTraverser(this, x, y, t);
+    let traverser = this.getBoardTraverser(x, y, t);
     
     // 4 cartesian directions are straightforward
     liveNeighbors += traverser.moveLeft().getStateAt();
