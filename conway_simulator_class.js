@@ -66,6 +66,10 @@ class ConwaySimulator {
     return this.boardState.getStateAt(x, y, t);
   }
   
+  setStateAt(x, y, t, newState) {
+    this.boardState.setStateAt(x, y, t, newState);
+  }
+  
   setDefaultState(defaultStateFunc) {
     this.boardState.setDefaultState(defaultStateFunc);
   }
