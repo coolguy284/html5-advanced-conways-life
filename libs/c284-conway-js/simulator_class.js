@@ -1,6 +1,12 @@
 let _module__c284_conway_js__simulator_class = (() => {
   let { CONSTANTS } = _module__c284_conway_js__constants;
-  let { calculateBaseTFromStartAndEndT } = _module__c284_conway_js__helper_funcs;
+  let {
+    getWorldSpaceCorner,
+    calculateBaseTFromStartAndEndT,
+    convertWordDirectionToCoordPair,
+    convertWordDirectionToCCWAngle,
+    convertCCWAngleToWordDirection,
+  } = _module__c284_conway_js__helper_funcs;
   
   class ConwaySimulator {
     boardState = new ConwayState();
@@ -197,7 +203,7 @@ let _module__c284_conway_js__simulator_class = (() => {
     
     // adds a basic double sided boundary
     addBasicBoundary(
-      startingX, startingY, direction, length,
+      startingX, startingY, direction, length, reversed,
       startingT, endingT,
       boundaryValue
     ) {
@@ -210,6 +216,7 @@ let _module__c284_conway_js__simulator_class = (() => {
         direction,
         length,
         facing: 'left',
+        reversed,
         startingT,
         endingT,
         baseT: calculateBaseTFromStartAndEndT(startingT, endingT),
@@ -223,6 +230,7 @@ let _module__c284_conway_js__simulator_class = (() => {
         direction,
         length,
         facing: 'right',
+        reversed,
         startingT,
         endingT,
         baseT: calculateBaseTFromStartAndEndT(startingT, endingT),
@@ -232,7 +240,7 @@ let _module__c284_conway_js__simulator_class = (() => {
     
     // adds a single sided boundary
     addSingleSidedBoundary(
-      startingX, startingY, direction, length, facing,
+      startingX, startingY, direction, length, facing, reversed,
       startingT, endingT,
       boundaryValue
     ) {
@@ -245,6 +253,7 @@ let _module__c284_conway_js__simulator_class = (() => {
         direction,
         length,
         facing,
+        reversed,
         startingT,
         endingT,
         baseT: calculateBaseTFromStartAndEndT(startingT, endingT),
@@ -287,6 +296,7 @@ let _module__c284_conway_js__simulator_class = (() => {
         direction: firstDirection,
         length,
         facing: firstFacing == 'left' ? 'right' : 'left',
+        reversed: false,
         startingT: firstStartingT,
         endingT: firstEndingT,
         baseT: calculateBaseTFromStartAndEndT(firstStartingT, firstEndingT),
@@ -323,11 +333,72 @@ let _module__c284_conway_js__simulator_class = (() => {
         direction: secondDirection,
         length,
         facing: secondFacing == 'left' ? 'right' : 'left',
+        reversed: false,
         startingT: secondStartingT,
         endingT: secondEndingT,
         baseT: calculateBaseTFromStartAndEndT(secondStartingT, secondEndingT),
         behaviorFunc: (x, t) => false,
       });
+    }
+    
+    // returns the true world position and direction exiting from an object at a certain position and time relative to the object
+    objectRelPosToTruePos(object, relX, relTime) {
+      let newDirectionNum = convertWordDirectionToCCWAngle(object.direction);
+      
+      // if facing left, add 1 to direction, else subtract 1
+      if (object.facing == 'left') {
+        newDirectionNum++;
+      } else {
+        newDirectionNum--;
+      }
+      
+      let newDirectionWord = convertCCWAngleToWordDirection(newDirectionNum);
+      
+      let offsetStartingPos = getWorldSpaceCorner(object.x, object.y, 'bottom left');
+      
+      let movementDirectionPair = convertWordDirectionToCoordPair(object.direction);
+      let perpendicularDirectionPair = convertWordDirectionToCoordPair(newDirectionWord);
+      
+      // flip relX if object is reversed
+      if (object.reversed) {
+        relX = (object.length - 1) - relX;
+      }
+      
+      let offsetPos = [
+        offsetStartingPos[0] + movementDirectionPair[0] * (relX + 0.5),
+        offsetStartingPos[1] + movementDirectionPair[1] * (relX + 0.5),
+      ];
+      
+      let offsetPerpendicularPos = [
+        offsetPos[0] + perpendicularDirectionPair[0] * 0.5,
+        offsetPos[1] + perpendicularDirectionPair[1] * 0.5,
+      ];
+      
+      let trueTime = relTime + object.baseT;
+      
+      return {
+        x: offsetPerpendicularPos[0],
+        y: offsetPerpendicularPos[1],
+        t: trueTime,
+        direction: newDirectionWord,
+      };
+    }
+    
+    // returns the parity of a portal as a bool. if one portal has true parity and another has false, the portals convert items into their mirror images.
+    getPortalParity(portalObject) {
+      if (portalObject.facing == 'left') {
+        if (!portalObject.reversed) {
+          return false;
+        } else {
+          return true;
+        }
+      } else if (portalObject.facing == 'right') {
+        if (!portalObject.reversed) {
+          return false;
+        } else {
+          return true;
+        }
+      }
     }
   }
   

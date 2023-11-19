@@ -6,9 +6,11 @@ let posScale = INITIAL_POS_SCALE;
 let simulationRunning = false;
 let timeSynced = true; // if false, time value shown on screen is not currently simulated time
 let detatchedTimeValue = 0; // value for detatched time if it is detatched
+let debugTraversing = false; // if the debug traverser is currently activated
 let previousTimeAfterRender;
 
 let conwaySim = new ConwaySimulator();
+let debugTraverser = null;
 
 let simMode = 10;
 let stateSetMode = 'manual setting'; // either 'default function' or 'manual setting'
@@ -179,7 +181,7 @@ function setInitialStateObjects() {
     case 6:
       // gosper glider gun with boundary
       conwaySim.addBasicBoundary(
-        20, -5, 'down', 20,
+        20, -5, 'down', 20, false,
         0, Infinity
       );
       break;
@@ -187,7 +189,7 @@ function setInitialStateObjects() {
     case 7:
       // gosper glider gun with hot boundary
       conwaySim.addBasicBoundary(
-        20, -5, 'down', 20,
+        20, -5, 'down', 20, false,
         0, Infinity,
         true
       );
@@ -196,7 +198,7 @@ function setInitialStateObjects() {
     case 8:
       // gosper glider gun with boundary facing towards it
       conwaySim.addSingleSidedBoundary(
-        20, -5, 'down', 20, 'right',
+        20, -5, 'down', 20, 'right', false,
         0, Infinity
       );
       break;
@@ -204,7 +206,7 @@ function setInitialStateObjects() {
     case 9:
       // gosper glider gun with boundary facing away from it
       conwaySim.addSingleSidedBoundary(
-        20, -5, 'down', 20, 'left',
+        20, -5, 'down', 20, 'left', false,
         0, Infinity
       );
       break;
@@ -212,7 +214,7 @@ function setInitialStateObjects() {
     case 10:
       // gosper glider gun with portals and boundary
       conwaySim.addBasicBoundary(
-        -10, -36, 'right', 31,
+        -10, -36, 'right', 31, false,
         0, Infinity
       );
       

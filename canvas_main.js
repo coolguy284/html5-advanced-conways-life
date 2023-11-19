@@ -141,6 +141,46 @@ function drawConways(ctx) {
     }
   }
   
+  // draw debug traverser object with debug text
+  if (debugTraversing) {
+    ctx.fillStyle = 'orange';
+    ctx.fillRect(
+      ...worldSpaceToScreenSpace(debugTraverser.x - 0.25, debugTraverser.y + 0.25),
+      squareSize / 2, squareSize / 2
+    );
+    
+    ctx.strokeStyle = 'red';
+    ctx.beginPath();
+    ctx.moveTo(...worldSpaceToScreenSpace(debugTraverser.x, debugTraverser.y));
+    ctx.lineTo(...worldSpaceToScreenSpace(debugTraverser.x + debugTraverser.selfX_trueXScale, debugTraverser.y + debugTraverser.selfX_trueYScale));
+    ctx.stroke();
+    
+    ctx.strokeStyle = 'blue';
+    ctx.beginPath();
+    ctx.moveTo(...worldSpaceToScreenSpace(debugTraverser.x, debugTraverser.y));
+    ctx.lineTo(...worldSpaceToScreenSpace(debugTraverser.x + debugTraverser.selfY_trueXScale, debugTraverser.y + debugTraverser.selfY_trueYScale));
+    ctx.stroke();
+    
+    let textHeight = 0.5;
+    let textX = 1.3;
+    ctx.fillStyle = 'cyan';
+    ctx.font = `${textHeight}px Consolas`;
+    ctx.save();
+    ctx.translate(...worldSpaceToScreenSpace(debugTraverser.x, debugTraverser.y));
+    ctx.scale(squareSize, squareSize);
+    ctx.fillText(`X: ${debugTraverser.x}, Y: ${debugTraverser.y}`, textX, 0);
+    ctx.fillText(`T: ${debugTraverser.t}`, textX, textHeight);
+    ctx.fillText(`X_X: ${debugTraverser.selfX_trueXScale}, X_Y: ${debugTraverser.selfX_trueYScale}`, textX, textHeight * 2);
+    ctx.fillText(`Y_X: ${debugTraverser.selfY_trueXScale}, Y_Y: ${debugTraverser.selfY_trueYScale}`, textX, textHeight * 3);
+    ctx.fillText(`InBound: ${debugTraverser.insideBoundary}`, textX, textHeight * 4);
+    ctx.fillText(`Bound_ID: ${conwaySim.simulationObjects.indexOf(debugTraverser.boundaryObject)}`, textX, textHeight * 5);
+    ctx.fillText(`Bound_Leave: ${debugTraverser.boundaryDisengageDirection}`, textX, textHeight * 6);
+    ctx.fillText(`Bound_Along: ${debugTraverser.boundaryMovementDirection}`, textX, textHeight * 7);
+    ctx.fillText(`Bound_X: ${debugTraverser.boundaryRelPos}`, textX, textHeight * 8);
+    ctx.fillText(`Bound_T: ${debugTraverser.boundaryRelTime}`, textX, textHeight * 9);
+    ctx.restore();
+  }
+  
   // print useful text information
   ctx.fillStyle = 'white';
   ctx.font = '4vh Consolas';

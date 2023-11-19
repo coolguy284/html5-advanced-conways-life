@@ -90,5 +90,72 @@ addEventListener('keydown', evt => {
       }
       renderFrame();
       break;
+    
+    case 'n':
+      if (debugTraversing) {
+        debugTraversing = false;
+        debugTraverser = null;
+      } else {
+        debugTraversing = true;
+        debugTraverser = conwaySim.getBoardTraverser(0, 0, 0);
+      }
+      renderFrame();
+      break;
+    
+    case 'i':
+      if (debugTraversing) {
+        debugTraverser = debugTraverser.moveUp();
+        renderFrame();
+      }
+      break;
+    
+    case 'k':
+      if (debugTraversing) {
+        debugTraverser = debugTraverser.moveDown();
+        renderFrame();
+      }
+      break;
+    
+    case 'j':
+      if (debugTraversing) {
+        debugTraverser = debugTraverser.moveLeft();
+        renderFrame();
+      }
+      break;
+    
+    case 'l':
+      if (debugTraversing) {
+        debugTraverser = debugTraverser.moveRight();
+        renderFrame();
+      }
+      break;
+    
+    case 'u':
+      if (debugTraversing) {
+        debugTraverser = debugTraverser.rotate(1);
+        renderFrame();
+      }
+      break;
+    
+    case 'o':
+      if (debugTraversing) {
+        debugTraverser = debugTraverser.rotate(3);
+        renderFrame();
+      }
+      break;
+    
+    case 'm':
+      if (debugTraversing) {
+        debugTraverser = debugTraverser.flipX();
+        renderFrame();
+      }
+      break;
+    
+    case '.':
+      if (debugTraversing) {
+        debugTraverser = debugTraverser.flipY();
+        renderFrame();
+      }
+      break;
   }
 });

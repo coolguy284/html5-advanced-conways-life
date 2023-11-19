@@ -1,6 +1,7 @@
 let _module__c284_conway_js__traverser_class = (() => {
   let { CONSTANTS } = _module__c284_conway_js__constants;
   let {
+    angleBetweenWords,
     convertDirectionCoordPairToWord,
     directionWordIsHorizontal,
   } = _module__c284_conway_js__helper_funcs;
@@ -185,11 +186,15 @@ let _module__c284_conway_js__traverser_class = (() => {
     
     // underlying movement and transformation functions
     
+    moveTo(x, y) {
+      return this.replaceParameters({ x, y });
+    }
+    
     trueMoveBy(x, y) {
       let movementDirectionWord = convertDirectionCoordPairToWord([x, y]);
       
-      if (!this.insideBoundary || movementDirectionWord == this.boundaryDisengageDirection) {
-        // normal movement logic if outside boundary or leaving boundary
+      if (!this.insideBoundary) {
+        // normal movement logic if outside boundary
         
         let collisionInfo = this.checkIfMovementDeltaIntersectsAnObject(x, y);
         
@@ -208,10 +213,55 @@ let _module__c284_conway_js__traverser_class = (() => {
                 boundaryRelPos: collisionInfo.positionAlongObject,
                 boundaryRelTime: collisionInfo.timeRelToObject,
               });
+            
+            case 'portal':
+              // portal behavior
+              
+              // save portal to object for use
+              let currentPortal = collisionInfo.object;
+              
+              // find corresponding portal
+              let otherPortal = this.conwaySim.simulationObjects[currentPortal.links[0].id];
+              
+              // rotate coord system of traverser from direction entering portal to directing leaving portal, then possibly apply a flip in the perpendicular direction if needed
+              
+              let exitInfo = this.conwaySim.objectRelPosToTruePos(otherPortal, collisionInfo.positionAlongObject, collisionInfo.timeRelToObject);
+              
+              let newTraverser = this;
+              
+              // rotate
+              let rotationAngle = angleBetweenWords(movementDirectionWord, exitInfo.direction);
+              newTraverser = newTraverser.rotate(rotationAngle);
+              
+              // flip if needed
+              let currentPortalParity = this.conwaySim.getPortalParity(currentPortal);
+              let otherPortalParity = this.conwaySim.getPortalParity(otherPortal);
+              
+              if (currentPortalParity != otherPortalParity) {
+                let parallelDirectionIsHorizontal = directionWordIsHorizontal(movementDirectionWord);
+                
+                if (parallelDirectionIsHorizontal) {
+                  newTraverser = newTraverser.flipY();
+                } else {
+                  newTraverser = newTraverser.flipX();
+                }
+              }
+              
+              return newTraverser;
           }
         } else {
-          // standard movement if no object, clearing boundary information if there is any
+          // standard movement if no object
           
+          return this.replaceParameters({
+            x: this.x + x,
+            y: this.y + y,
+          });
+        }
+      } else {
+        // inside boundary
+        
+        if (movementDirectionWord == this.boundaryDisengageDirection) {
+          // if travelling in boundary disengage direction, dont change position, just disengage
           return this.replaceParameters({
             insideBoundary: false,
             boundaryObject: null,
@@ -219,43 +269,42 @@ let _module__c284_conway_js__traverser_class = (() => {
             boundaryMovementDirection: null,
             boundaryRelPos: null,
             boundaryRelTime: null,
-            x: this.x + x,
-            y: this.y + y,
           });
-        }
-      } else {
-        // only register movement along boundary if inside boundary
-        
-        if (directionWordIsHorizontal(this.boundaryMovementDirection)) {
-          if (directionWordIsHorizontal(movementDirectionWord)) {
-            if (this.boundaryMovementDirection == movementDirectionWord) {
-              return this.replaceParameters({
-                x: this.x + x,
-                boundaryRelPos: this.boundaryRelPos + 1,
-              });
+        } else {
+          // otherwise only register movement along boundary
+          if (directionWordIsHorizontal(this.boundaryMovementDirection)) {
+            if (directionWordIsHorizontal(movementDirectionWord)) {
+              if (this.boundaryMovementDirection == movementDirectionWord) {
+                return this.replaceParameters({
+                  x: this.x + x,
+                  boundaryRelPos: this.boundaryRelPos + 1,
+                });
+              } else {
+                return this.replaceParameters({
+                  x: this.x + x,
+                  boundaryRelPos: this.boundaryRelPos - 1,
+                });
+              }
             } else {
-              return this.replaceParameters({
-                x: this.x + x,
-                boundaryRelPos: this.boundaryRelPos - 1,
-              });
+              // do nothing
+              return this;
             }
           } else {
-            // do nothing
-          }
-        } else {
-          if (directionWordIsHorizontal(movementDirectionWord)) {
-            // do nothing
-          } else {
-            if (this.boundaryMovementDirection == movementDirectionWord) {
-              return this.replaceParameters({
-                y: this.y + y,
-                boundaryRelPos: this.boundaryRelPos + 1,
-              });
+            if (directionWordIsHorizontal(movementDirectionWord)) {
+              // do nothing
+              return this;
             } else {
-              return this.replaceParameters({
-                y: this.y + y,
-                boundaryRelPos: this.boundaryRelPos - 1,
-              });
+              if (this.boundaryMovementDirection == movementDirectionWord) {
+                return this.replaceParameters({
+                  y: this.y + y,
+                  boundaryRelPos: this.boundaryRelPos + 1,
+                });
+              } else {
+                return this.replaceParameters({
+                  y: this.y + y,
+                  boundaryRelPos: this.boundaryRelPos - 1,
+                });
+              }
             }
           }
         }
