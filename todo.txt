@@ -18,7 +18,8 @@ print additional info
   COM, COM velocity
     uses the neighborhood distance equation for both, so max of abs of x and y
       although since it doesnt have to, there can be both a normal version and a COM version
-inverted mirror object?
+inverted mirror object
+instead of ignoring further moves into a boundary, keep track of boundarydepth and allow object position to move instead of holding still next to boundary
 
 roadmap:
   rendering                      - done
@@ -29,10 +30,11 @@ roadmap:
     portals                        - done
   simulation                     - not yet
     main                           - done
-    boundaries                     - not yet
+    boundaries                     - done
     portals                        - not yet
-      main                         - not yet
+      main                         - done
       strength                     - not yet
+      multiple links               - not yet
       temporalShift                - not yet
   interactability                - not yet
     running view                   - done

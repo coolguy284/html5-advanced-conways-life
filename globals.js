@@ -12,7 +12,7 @@ let previousTimeAfterRender;
 let conwaySim = new ConwaySimulator();
 let debugTraverser = null;
 
-let simMode = 12;
+let simMode = 13;
 let stateSetMode = 'manual setting'; // either 'default function' or 'manual setting'
 
 // https://en.wikipedia.org/wiki/Conway's_Game_of_Life
@@ -171,6 +171,20 @@ function setInitialState() {
       
       setInitialStateToArray(conwaySim, lwss, 0, -2);
       break;
+    
+    case 13:
+      // self-sustaining dot
+      conwaySim.setSimulationArea(-4, -4, 4, 4);
+      
+      setInitialStateToArray(conwaySim, [[1]], 0, 0);
+      break;
+    
+    case 14:
+      // lwss with time portals
+      conwaySim.setSimulationArea(-20, -10, 20, 10);
+      
+      setInitialStateToArray(conwaySim, lwss, 0, -2);
+      break;
   }
 }
 
@@ -229,13 +243,34 @@ function setInitialStateObjects() {
     
     case 12:
       // lwss with portals
-      
       conwaySim.addPortalPairWithBackBoundaries(
         16, 6, 'down', 'right', false,
         -15, 6, 'down', 'left', false,
         11,
         0, Infinity,
         0
+      );
+      break;
+    
+    case 13:
+      // self-sustaining dot
+      conwaySim.addPortalPairWithBackBoundaries(
+        0, 0, 'right', 'left', false,
+        0, 0, 'up', 'right', false,
+        2,
+        0, Infinity,
+        0
+      );
+      break;
+    
+    case 14:
+      // lwss with time portals
+      conwaySim.addPortalPairWithBackBoundaries(
+        0, 0, 'right', 'left', false,
+        0, 0, 'up', 'right', false,
+        2,
+        0, Infinity,
+        2 // :O
       );
       break;
   }

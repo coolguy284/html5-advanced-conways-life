@@ -113,6 +113,7 @@ let _module__c284_conway_js__traverser_class = (() => {
             if (shiftedEndingX < shiftedStartingX) {
               [ shiftedStartingX, shiftedEndingX ] = [shiftedEndingX, shiftedStartingX];
             }
+            
             if (shiftedEndingY < shiftedStartingY) {
               [ shiftedStartingY, shiftedEndingY ] = [shiftedEndingY, shiftedStartingY];
             }
@@ -128,10 +129,10 @@ let _module__c284_conway_js__traverser_class = (() => {
                     // and simulation object direction, simulation object facing, and direction of traversal line up
                     if (CONSTANTS.COLLISION_MATRIX_HORIZONTAL[(simObject.direction == 'up') * 4 + (simObject.facing == 'right') * 2 + (x > 0)]) {
                       // then there was a collision
-                      let positionAlongObject = simObject.startingY - this.y - 1;
+                      let positionAlongObject = simObject.direction == 'up' ? this.y - simObject.startingY : simObject.startingY - this.y - 1;
                       
                       if (simObject.reversed) {
-                        positionAlongObject = simObject.length - positionAlongObject - 1;
+                        positionAlongObject = (simObject.length - 1) - positionAlongObject;
                       }
                       
                       let timeRelToObject = this.t - simObject.baseT;
@@ -157,10 +158,10 @@ let _module__c284_conway_js__traverser_class = (() => {
                     // and simulation object direction, simulation object facing, and direction of traversal line up
                     if (CONSTANTS.COLLISION_MATRIX_VERTICAL[(simObject.direction == 'right') * 4 + (simObject.facing == 'right') * 2 + (y > 0)]) {
                       // then there was a collision
-                      let positionAlongObject = simObject.startingX - this.x - 1;
+                      let positionAlongObject = simObject.direction == 'right' ? this.x - simObject.startingX : simObject.startingX - this.x - 1;
                       
                       if (simObject.reversed) {
-                        positionAlongObject = simObject.length - positionAlongObject - 1;
+                        positionAlongObject = (simObject.length - 1) - positionAlongObject;
                       }
                       
                       let timeRelToObject = this.t - simObject.baseT;
