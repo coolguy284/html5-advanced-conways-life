@@ -190,6 +190,10 @@ let _module__c284_conway_js__traverser_class = (() => {
       return this.replaceParameters({ x, y });
     }
     
+    moveToWithTime(x, y, t) {
+      return this.replaceParameters({ x, y, t });
+    }
+    
     trueMoveBy(x, y) {
       let movementDirectionWord = convertDirectionCoordPairToWord([x, y]);
       
@@ -198,8 +202,8 @@ let _module__c284_conway_js__traverser_class = (() => {
         
         let collisionInfo = this.checkIfMovementDeltaIntersectsAnObject(x, y);
         
-        if (collisionInfo != null && collisionInfo.object.type == 'boundary') {
-          // perform traversal behavior through object if object
+        if (collisionInfo != null) {
+          // perform traversal behavior through object if there is an object
           
           switch (collisionInfo.object.type) {
             case 'boundary':
@@ -247,7 +251,14 @@ let _module__c284_conway_js__traverser_class = (() => {
                 }
               }
               
+              // and of course, set position to new x and y
+              newTraverser = newTraverser.moveToWithTime(exitInfo.x, exitInfo.y, exitInfo.t);
+              
               return newTraverser;
+            
+            default:
+              // take no action if unknown object type
+              return this;
           }
         } else {
           // standard movement if no object

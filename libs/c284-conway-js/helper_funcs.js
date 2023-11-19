@@ -88,7 +88,7 @@ let _module__c284_conway_js__helper_funcs = (() => {
       case 1: return 'up';
       case 2: return 'left';
       case 3: return 'down';
-      default: throw new Error(`Invalid direction ${direction}`);
+      default: throw new Error(`Invalid angle ${ccwAngle}`);
     }
   }
   
@@ -96,7 +96,7 @@ let _module__c284_conway_js__helper_funcs = (() => {
     return directionWord == 'left' || directionWord == 'right';
   }
   
-  // returns the 90deg CW angle between two angle words
+  // returns the 90deg CCW angle between two angle words
   function angleBetweenWords(directionWordOne, directionWordTwo) {
     return ((convertWordDirectionToCCWAngle(directionWordTwo) - convertWordDirectionToCCWAngle(directionWordOne)) + 4) % 4;
   }

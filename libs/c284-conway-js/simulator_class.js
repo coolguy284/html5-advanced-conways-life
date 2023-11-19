@@ -351,10 +351,11 @@ let _module__c284_conway_js__simulator_class = (() => {
       } else {
         newDirectionNum--;
       }
+      newDirectionNum = (newDirectionNum + 4) % 4;
       
       let newDirectionWord = convertCCWAngleToWordDirection(newDirectionNum);
       
-      let offsetStartingPos = getWorldSpaceCorner(object.x, object.y, 'bottom left');
+      let offsetStartingPos = getWorldSpaceCorner(object.startingX, object.startingY, 'bottom left');
       
       let movementDirectionPair = convertWordDirectionToCoordPair(object.direction);
       let perpendicularDirectionPair = convertWordDirectionToCoordPair(newDirectionWord);

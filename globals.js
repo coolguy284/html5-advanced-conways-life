@@ -12,7 +12,7 @@ let previousTimeAfterRender;
 let conwaySim = new ConwaySimulator();
 let debugTraverser = null;
 
-let simMode = 10;
+let simMode = 12;
 let stateSetMode = 'manual setting'; // either 'default function' or 'manual setting'
 
 // https://en.wikipedia.org/wiki/Conway's_Game_of_Life
@@ -220,7 +220,7 @@ function setInitialStateObjects() {
       
       conwaySim.addPortalPairWithBackBoundaries(
         15, -5, 'down', 'right', false,
-        -15, -5, 'down', 'left', true,
+        -15, -5, 'down', 'left', false,
         21,
         0, Infinity,
         0
@@ -232,7 +232,7 @@ function setInitialStateObjects() {
       
       conwaySim.addPortalPairWithBackBoundaries(
         16, 6, 'down', 'right', false,
-        -15, 6, 'down', 'left', true,
+        -15, 6, 'down', 'left', false,
         11,
         0, Infinity,
         0

@@ -141,7 +141,7 @@ function drawConways(ctx) {
     }
   }
   
-  // draw debug traverser object with debug text
+  // if debug traversing, draw debug traverser object with debug text
   if (debugTraversing) {
     ctx.fillStyle = 'orange';
     ctx.fillRect(
