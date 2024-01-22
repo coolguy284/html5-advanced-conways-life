@@ -1,3 +1,6 @@
+add support for one sided portals (and add a demonstration scene for it)
+add gliderspam split into portals in a circle thing
+
 stall object type that is like boundary but just prevents traversal into it period, so the traverser is stuck where it used to be and no state is changed
 mirror object type that just reflects facing direction back away
 
@@ -11,6 +14,11 @@ give portals functionality slowly
 add interactability like initial state customization, drawing in objects, so full on edit mode with saving to localstorage and export functionality (copy paste the text box or get a file download) and reverse for import
   will add menu bar at top that has big select for simulation, reset button, edit button (pencil)
   edit button switches to edit view which makes another menu appear below
+many simulation regions / (thus boundaries) support
+abstract the getdefaultcell function with the capability to have always zero dafault cell (for optimization) and thus also add a setEmptyDefault function, or maybe make that what happens by default, in addition to providing a function for setting it as that
+  then optimizations can be done
+create rust version of simulation code that runs on webassembly, with option in settings page to use it for speed
+add settings page
 
 low priority:
 make functions error on invalid input
@@ -20,6 +28,14 @@ print additional info
       although since it doesnt have to, there can be both a normal version and a COM version
 inverted mirror object
 instead of ignoring further moves into a boundary, keep track of boundarydepth and allow object position to move instead of holding still next to boundary
+clean classes with hidden properties and methods for simulation object and others
+sim boundary should visually appear on inside not down middle of edge
+traversal mode holding shift when moving to do absolute move that ignores portals
+check what happens if overpopulation death removed
+track percentage of time till next tick and average over past 100 (reset if pause, only calc when play)
+
+not needed:
+conwaysim should be self contained, no extern funcs but yes consts
 
 roadmap:
   rendering                      - done
